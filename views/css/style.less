@@ -1,0 +1,118 @@
+body,
+html {
+    font-family: Consolas, monospace;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+#config {
+    background: #363636;
+    color: #E8175D;
+    vertical-align: top;
+    width: 350px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+
+    & > h2 {
+        text-align: center;
+        border-top: none;
+    }
+
+    button,
+    div,
+    input,
+    label,
+    span {
+        margin: 10px auto;
+        padding: 5px;
+        display: block;
+    }
+
+    & > * {
+        border-top: solid 1px #FFF;
+        width: 100%;
+    }
+
+    button,
+    input,
+    span {
+        width: 80%;
+        padding: 10px;
+    }
+}
+
+#results {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 350px;
+    right: 0;
+    overflow: auto;
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+
+        thead,tbody{
+            td {
+                width: 125px;
+                padding: 16px;
+                text-align: center;
+            }
+
+            td:first-child {
+                text-align: left;
+                width: auto;
+            }
+        }
+        thead {
+            background: #CC527A;
+            color: #FFF;
+            }
+
+        tbody {  
+            tr:nth-child(odd) td {
+                background: #DDD;
+            }
+
+            tr:nth-child(even) td {
+                background: #EEE;
+            }
+        }
+    }
+}
+
+#overlay.on {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,.4);
+    background-image: url('~/../../media/logo.png');
+    background-position: center;
+    background-size: auto;
+    background-repeat: no-repeat;
+    span{
+        display: block;
+        position: absolute;
+        top:0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 20px;
+        line-height: 20px;
+        margin: auto;
+        width:200px;
+        text-align:  center;
+        font-weight: bold;
+        color: #FFF;
+        text-shadow: 2px 2px #555;
+    }
+}

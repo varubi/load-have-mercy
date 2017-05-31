@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <script src="./js/electron.js" charset="utf-8"></script>
+  <script src="./js/views.js" charset="utf-8"></script>
+  <script src="./js/script.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+  <div id="config">
+    <h2>Configuration</h2>  
+    <label>
+      <span>Starting Url</span>
+      <input id="base_url" type="text" name="baseurl" value="https://www.google.com/">
+    </label>
+      <label>
+      <span>Max URLs To Crawl </span>
+      <input id="url_limit" type="number" min="0" value="100">
+    </label>
+
+    <label>
+      <span>Number of times to request</span>
+      <input id="url_passes" type="number" min="1" max="20" value="1">
+    </label>
+
+    <label>
+      <span>Max Requests Per Second</span>
+      <input id="request_maxpersecond" type="number" min="1" max="100" value="10">
+    </label>
+    
+    <label>
+      <span>Max Requests Open</span>
+      <input id="request_limit" type="number" min="1" max="100" value="10">
+    </label>
+    <button onclick="run()">Run</button>
+  </div>
+  <div id="results"></div>
+  <div id="overlay"><span>0 Requests</span></div>
+
+</body>
+
+</html>
