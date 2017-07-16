@@ -1,79 +1,279 @@
-body,
-html {
-  font-family: Consolas, monospace;
+@import url('https://fonts.googleapis.com/css?family=Cantarell:400i|Ubuntu');
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Ubuntu', sans-serif;
 }
 * {
   box-sizing: border-box;
 }
-#config {
-  background: #363636;
-  color: #E8175D;
-  vertical-align: top;
-  width: 350px;
+select,
+input {
+  font-family: 'Cantarell', sans-serif;
+  border: none;
+  background: none;
+  border-bottom: solid 2px #CCC;
+  color: inherit;
+}
+select:disabled,
+input:disabled {
+  color: inherit;
+}
+select:focus,
+input:focus {
+  outline: none;
+  color: inherit;
+  border-bottom-color: #31ACED;
+}
+button {
+  cursor: pointer;
+}
+button.n1 {
+  color: #FFF;
+  background: #31ACED;
+  border: solid 1px #31ACED;
+  box-shadow: 4px 4px 3px -1px rgba(0, 0, 0, 0.07);
+}
+button.n2 {
+  color: #FFF;
+  background: #EFD951;
+  border: solid 1px #EFD951;
+  box-shadow: 4px 4px 3px -1px rgba(0, 0, 0, 0.07);
+}
+#mainbar {
+  color: #DDD;
+  background: #222;
+  border: solid 1px #222;
+  box-shadow: 4px 4px 3px -1px rgba(0, 0, 0, 0.07);
   position: fixed;
   top: 0;
-  bottom: 0;
   left: 0;
-  overflow: auto;
+  right: 0;
+  height: 100px;
+  z-index: 1000;
 }
-#config > h2 {
-  text-align: center;
-  border-top: none;
-}
-#config button,
-#config div,
-#config input,
-#config label,
-#config span {
-  margin: 10px auto;
-  padding: 5px;
+#mainbar #urlbar {
+  position: absolute;
   display: block;
+  font-size: 24px;
+  height: 40px;
+  min-width: 400px;
+  padding: 0 10px;
+  line-height: 40px;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  color: #EFD951;
+  transform: translateX(-50%) translateY(-50%);
+  transition: all 1s;
 }
-#config > * {
-  border-top: solid 1px #FFF;
-  width: 100%;
+#mainbar #urlbar:focus {
+  color: inherit;
 }
-#config button,
-#config input,
-#config span {
-  width: 80%;
+#mainbar #urlbar:disabled {
+  left: 10px;
+  transform: translateX(0%) translateY(-50%);
+}
+#mainbar #urlbar.error {
+  color: #FF2828;
+}
+#mainbar #stats {
+  display: flex;
+  position: fixed;
+  right: 0;
+  top: 0;
   padding: 10px;
+}
+#mainbar #stats .stat {
+  min-width: 100px;
+  text-align: center;
+}
+#mainbar #stats .stat + .stat {
+  border-left: solid 1px #FFF;
+}
+#mainbar #stats .stat .title {
+  font-weight: bold;
+}
+#mainbar #stats .stat .value {
+  font-size: 32px;
+}
+#config {
+  position: fixed;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 20px 10px 10px;
+  z-index: 900;
+  transition: all 1s;
+  width: 100%;
+  color: #222;
+  background: #EEE;
+  border: solid 1px #CCC;
+  box-shadow: 4px 4px 3px -1px rgba(0, 0, 0, 0.07);
+}
+#config > .options {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+#config > .options div {
+  display: table;
+  width: 30%;
+}
+#config.active {
+  top: 90px;
+}
+#config label {
+  display: table-row;
+  height: 50px;
+  line-height: 50px;
+}
+#config label > * {
+  display: table-cell;
+  font-weight: bold;
+}
+#config label input,
+#config label select {
+  float: right;
+  font-weight: bold;
+}
+#config label select > option {
+  font-weight: bold;
+}
+#config label input[type="number"] {
+  text-align: center;
+  width: 50px;
+}
+#config label input[type="checkbox"] {
+  position: relative;
+}
+#config label input[type="checkbox"]:before {
+  content: ' ';
+  position: absolute;
+  height: 15px;
+  line-height: 5px;
+  font-size: 24px;
+  width: 15px;
+  right: 0px;
+  display: block;
+  background: #FFF;
+  border: solid 2px #DDD;
+  text-align: center;
+}
+#config label input[type="checkbox"]:checked:before {
+  border-color: #31ACED;
+  content: '✔';
+}
+#config button.n1 {
+  padding: 10px 20px;
+  float: right;
+}
+#config button.minimize {
+  background: none;
+  border: none;
+  width: 100%;
+  padding: 10px 0;
+  overflow: hidden;
+}
+#config button.minimize:focus {
+  outline: none;
+}
+#config button.minimize span {
+  display: block;
+  margin: auto;
+  text-align: center;
+  transform: rotate(90deg);
+  font-size: 50px;
+  line-height: 10px;
+  color: #AAA;
+}
+#config button.minimize span:hover {
+  color: #31ACED;
+}
+#browser {
+  position: fixed;
+  left: 0;
+  right: 0;
+  overflow: auto;
+  top: -110%;
+  bottom: 100%;
+  transition: all 1s;
+}
+#browser.active {
+  top: 100px;
+  bottom: 0;
+}
+#browser[active="browserinfo"] #browserinfo {
+  display: block;
+  opacity: 1;
+}
+#browser #browserinfo,
+#browser #webview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+#browser #browserinfo {
+  display: none;
+  opacity: 0;
+  color: #222;
+  background: #EEE;
+  transition: all 1s;
 }
 #results {
   position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 350px;
+  top: 100px;
+  left: 0;
   right: 0;
+  bottom: 0;
   overflow: auto;
+}
+#results #graphs {
+  width: 100%;
+  min-height: 450px;
 }
 #results table {
   width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
 }
-#results table thead td,
-#results table tbody td {
-  width: 125px;
-  padding: 16px;
-  text-align: center;
-}
-#results table thead td:first-child,
-#results table tbody td:first-child {
-  text-align: left;
-  width: auto;
-}
-#results table thead {
-  background: #CC527A;
-  color: #FFF;
-}
-#results table tbody tr:nth-child(odd) td {
-  background: #DDD;
-}
-#results table tbody tr:nth-child(even) td {
+#results table tr:nth-child(even) {
+  color: #222;
   background: #EEE;
 }
-#overlay.on {
+#results table tr:hover {
+  background: #EFD951;
+}
+#results table th {
+  color: #222;
+  background: #EEE;
+  position: sticky;
+  top: 0;
+  padding: 10px;
+}
+#results table td {
+  padding: 5px;
+}
+#results table td .domain {
+  display: block;
+  opacity: .5;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+#results table td:nth-child(1),
+#results table td:nth-child(2) {
+  text-align: center;
+}
+#results table td:nth-child(4),
+#results table td:nth-child(5),
+#results table td:nth-child(6),
+#results table td:nth-child(7),
+#results table td:nth-child(8),
+#results table td:nth-child(9) {
+  text-align: right;
+}
+#overlay.active {
   position: fixed;
   top: 0;
   left: 0;
@@ -84,8 +284,9 @@ html {
   background-position: center;
   background-size: auto;
   background-repeat: no-repeat;
+  z-index: 10000;
 }
-#overlay.on span {
+#overlay.active span {
   display: block;
   position: absolute;
   top: 0;

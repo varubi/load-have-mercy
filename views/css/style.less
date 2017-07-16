@@ -1,94 +1,274 @@
-body,
-html {
-    font-family: Consolas, monospace;
-}
+@import url('https://fonts.googleapis.com/css?family=Cantarell:400i|Ubuntu');
+html,body{
+    padding: 0;
+    margin: 0;
+    font-family: 'Ubuntu', sans-serif;
 
-* {
+}
+*{
     box-sizing: border-box;
 }
-
-#config {
-    background: #363636;
-    color: #E8175D;
-    vertical-align: top;
-    width: 350px;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    overflow: auto;
-
-    & > h2 {
-        text-align: center;
-        border-top: none;
+select,
+input{
+    font-family: 'Cantarell', sans-serif;
+    border: none;
+    background: none;
+    border-bottom: solid 2px #CCC;
+    color: inherit;
+    &:disabled{
+        color: inherit;
     }
-
-    button,
-    div,
-    input,
-    label,
-    span {
-        margin: 10px auto;
-        padding: 5px;
-        display: block;
+    &:focus{
+        outline: none;
+        color: inherit;
+        border-bottom-color: @color_primary;
     }
-
-    & > * {
-        border-top: solid 1px #FFF;
-        width: 100%;
+}
+button{
+    cursor: pointer;
+    &.n1{
+        #btn>.n1>.inner();
+        #btn>.n1>.outer();
     }
-
-    button,
-    input,
-    span {
-        width: 80%;
-        padding: 10px;
+    &.n2{
+        #btn>.n2>.inner();
+        #btn>.n2>.outer();
     }
 }
 
-#results {
+#mainbar{
+    #pane>.n1>.inner();
+    #pane>.n1>.outer();
     position: fixed;
     top: 0;
-    bottom: 0;
-    left: 350px;
+    left: 0;
     right: 0;
-    overflow: auto;
-
-    table {
+    height: 100px;
+    z-index: 1000;
+    #urlbar{
+        position: absolute;
+        display: block;
+        font-size: 24px;
+        height: 40px;
+        min-width: 400px;
+        padding: 0 10px;
+        line-height: 40px;
+        font-weight: bold;
+        top: 50%;
+        left: 50%;
+        color:@color_secondary;
+        transform: translateX(-50%)  translateY(-50%);
+        transition: all 1s;
+        &:focus{
+            color: inherit;
+        }
+        &:disabled{
+            left: 10px;            
+            transform: translateX(0%)  translateY(-50%);
+        }
+        &.error{
+            color: @color_negative;
+        }
+    }
+    #stats{
+        display: flex;
+        position: fixed;
+        right: 0;
+        top: 0;
+        padding: 10px;
+        .stat{            
+            min-width: 100px;
+            text-align: center;
+            &+.stat{
+                border-left: solid 1px #FFF;
+            }
+            .title{
+                font-weight: bold;
+            }
+            .value{
+                font-size: 32px;
+            }
+        }
+    }
+}
+#config{
+    position: fixed;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 20px 10px 10px;
+    z-index: 900;
+    transition: all 1s;
+    width: 100%;
+    #pane>.n2>.inner();
+    #pane>.n2>.outer();
+    &>.options{   
         width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-
-        thead,tbody{
-            td {
-                width: 125px;
-                padding: 16px;
+        display: flex;
+        justify-content: space-around;
+        div{     
+            display: table;
+            width: 30%;          
+        }
+    }
+    &.active{
+        top: 90px;
+    }
+    label{
+        display: table-row;
+        height: 50px;
+        line-height: 50px;
+        &>*{
+            display: table-cell;
+            font-weight: bold;
+        }
+        input, select{            
+            float: right;
+            font-weight: bold;
+        }
+        
+        select > option{
+            font-weight: bold;
+        }
+        input[type="number"]{
+            text-align: center;
+            width: 50px;
+        }
+        input[type="checkbox"]{
+            position: relative;
+            &:before{
+                content: ' ';
+                position: absolute;
+                height: 15px;
+                line-height: 5px;
+                font-size: 24px;
+                width: 15px;
+                right: 0px;
+                display: block;
+                background: #FFF;
+                border: solid 2px #DDD;
                 text-align: center;
             }
-
-            td:first-child {
-                text-align: left;
-                width: auto;
+            &:checked:before{
+                border-color: @color_primary;
+                content: '✔';
             }
         }
-        thead {
-            background: #CC527A;
-            color: #FFF;
+    }
+    button.n1{
+        padding: 10px 20px;
+        float: right;
+    }
+    button.minimize{
+        background: none;
+        border: none;
+        width: 100%;
+        padding: 10px 0;
+        overflow: hidden;
+        &:focus {
+            outline: none;
+        }
+        span{
+            display: block;
+            margin: auto;
+            text-align: center;
+            transform: rotate(90deg);
+            font-size: 50px;
+            line-height: 10px;
+            color: #AAA;
+            &:hover{
+                color: @color_primary;
             }
+        }
+    }
+}
+#browser{
+    position: fixed;
+    left: 0;
+    right: 0;
+    overflow: auto;
+    top: -110%;
+    bottom: 100%;
+    transition: all 1s;
+    
+    &.active{
+        top: 100px;
+        bottom: 0;
+    }
+    &[active="browserinfo"]{
+        #browserinfo{
+            display: block;
+            opacity: 1;
+        }
+    }
+    #browserinfo, #webview{
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+    }
+    #browserinfo{
+        display: none;
+        opacity: 0;
+        #pane>.n2>.inner();
+        transition: all 1s;
+    }
+}
 
-        tbody {  
-            tr:nth-child(odd) td {
-                background: #DDD;
+#results{
+    position: fixed;
+    top: 100px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    #graphs{
+        width: 100%; 
+        min-height: 450px;
+    }
+    table{
+        width: 100%;
+        tr{
+            &:nth-child(even) {
+                #pane>.n2>.inner();
             }
-
-            tr:nth-child(even) td {
-                background: #EEE;
+            &:hover{
+                background: @color_secondary;
+            }
+        }
+        th{
+            #pane>.n2>.inner();
+            position: sticky;
+            top: 0;
+            padding: 10px;
+        }
+        td{
+            padding: 5px;
+            .domain{
+                display: block;
+                opacity: .5;
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+            &:nth-child(1),
+            &:nth-child(2) {
+                text-align: center;
+            }            
+            &:nth-child(4),
+            &:nth-child(5),
+            &:nth-child(6),
+            &:nth-child(7),
+            &:nth-child(8),
+            &:nth-child(9)
+            {
+                text-align: right;
             }
         }
     }
 }
 
-#overlay.on {
+#overlay.active {
     position: fixed;
     top: 0;
     left: 0;
@@ -99,6 +279,7 @@ html {
     background-position: center;
     background-size: auto;
     background-repeat: no-repeat;
+    z-index: 10000;
     span{
         display: block;
         position: absolute;
@@ -114,5 +295,78 @@ html {
         font-weight: bold;
         color: #FFF;
         text-shadow: 2px 2px #555;
+    }
+}
+
+@color_primary: #31ACED;
+@color_secondary: #EFD951;
+@color_negative: #FF2828;
+@boxshadow: 4px 4px 3px -1px rgba(0, 0, 0, 0.07);
+
+
+#btn{
+    .n1{
+        .inner(){
+            color: #FFF;
+            background: @color_primary;
+        }
+        .outer(){
+            border: solid 1px @color_primary;
+            box-shadow: @boxshadow;
+        }
+    }
+    .n2{
+        .inner(){
+            color: #FFF;
+            background: @color_secondary;            
+        }
+        .outer(){
+            border: solid 1px @color_secondary;
+            box-shadow: @boxshadow;
+        }
+    }
+    .pos{
+        .inner(){
+            color: #777;
+            background: #DDD;            
+        }
+        .outer(){
+            border: solid 1px #777;
+            box-shadow: @boxshadow;
+        }
+    }    
+    .neg{
+        .inner(){
+            color: #777;
+            background: #DDD;            
+        }
+        .outer(){
+            border: solid 1px #777;
+            box-shadow: @boxshadow;
+        }
+    }
+}
+
+
+#pane{
+    .n1{
+        .inner(){
+            color: #DDD;
+            background: #222;        
+        }
+        .outer(){
+            border: solid 1px #222;
+            box-shadow: @boxshadow;
+        }
+    }
+    .n2{
+        .inner(){
+            color: #222;
+            background: #EEE;            
+        }
+        .outer(){
+            border: solid 1px #CCC;
+            box-shadow: @boxshadow;
+        }
     }
 }

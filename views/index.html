@@ -6,41 +6,78 @@
   <title></title>
   <script src="./js/electron.js" charset="utf-8"></script>
   <script src="./js/views.js" charset="utf-8"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="./js/script.js" charset="utf-8"></script>
   <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
-  <div id="config">
-    <h2>Configuration</h2>  
-    <label>
-      <span>Starting Url</span>
-      <input id="base_url" type="text" name="baseurl" value="https://www.google.com/">
-    </label>
-      <label>
-      <span>Max URLs To Crawl </span>
-      <input id="url_limit" type="number" min="0" value="100">
-    </label>
-
-    <label>
-      <span>Number of times to request</span>
-      <input id="url_passes" type="number" min="1" max="20" value="1">
-    </label>
-
-    <label>
-      <span>Max Requests Per Second</span>
-      <input id="request_maxpersecond" type="number" min="1" max="100" value="10">
-    </label>
-    
-    <label>
-      <span>Max Requests Open</span>
-      <input id="request_limit" type="number" min="1" max="100" value="10">
-    </label>
-    <button onclick="run()">Run</button>
+  <div id="mainbar">
+    <input id="urlbar" type="text" value="https://www.google.com" spellcheck="false" onfocus=" document.getElementById('config').classList.add('active')">
+    <div id="stats">
+      <div class="stat">
+        <div class="title">Total</div>
+        <div class="value" stat="Total">0</div>
+      </div>
+      <div class="stat">
+        <div class="title">Time</div>
+        <div class="value" stat="Time">0</div>
+      </div>
+    </div>
+  </div>
+  <div id="config" class="active">
+    <div class="options">
+      <div>
+        <label>
+				<span>Max URLs To Crawl</span>
+				<input id="url_limit" type="number" min="0" value="100">
+			</label>
+        <label>
+				<span>Max Requests Per Second</span>
+				<input id="request_maxpersecond" type="number" min="1" max="100" value="10">
+			</label>
+        <label>
+				<span>Max Requests Open</span>
+				<input id="request_limit" type="number" min="1" max="100" value="10">
+			</label>
+      </div>
+      <div>
+        <label>
+				<span>Follow External Domains</span>
+				<input id="domains_external" type="checkbox">
+			</label>
+        <label>
+				<span>Follow Subdomains</span>
+				<input id="domains_sub" type="checkbox" checked="checked">
+			</label>
+        <label>
+				<span>Case Sensitive</span>
+				<input id="case_sensitive" type="checkbox">
+			</label>
+      </div>
+      <div>
+        <label>
+				<span>Protocols</span>
+				<span>
+					<select id="protocols">
+						<option value="https,http">HTTP / HTTPS</option>
+						<option value="https">HTTPS</option>
+						<option value="http">HTTP</option>
+					</select>
+				</span>
+			</label>
+      </div>
+    </div>
+    <button class="n1" onclick="run()">Go!</button>
+    <button class="n1" onclick="load()">Load</button>
+    <button class="minimize" onclick="this.parentNode.classList.remove('active')"><span>‹</span></button>
   </div>
   <div id="results"></div>
   <div id="overlay"><span>0 Requests</span></div>
-
+  <div id="browser" class="active" active="browserinfo">
+    <div id="browserinfo"></div>
+    <webview id="webview" partition="electron" src="https://github.com"></webview>
+  </div>
 </body>
 
 </html>

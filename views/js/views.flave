@@ -1,34 +1,53 @@
 class views{
-  view results{
-    <table>
-    <thead>
-    <tr>
-      <td>URL</td>
-      <td>Status</td>
-      <td>Time</td>
-      <td>Size</td>
-      <td>Parse Time</td>
-      <td>Process Time</td>
-      </tr>
-    </thead>
-    <tbody>
-      @for(var i = 0; i < data.length; i++) {
-      <tr>
-        <td>@(data[i].href)</td>
-        <td>@(data[i].status)</td>
-        <td>@(data[i].time)</td>
-        <td>@(this.bytesize(data[i].size))</td>
-        <td>@(data[i].parsetime)</td>
-        <td>@(data[i].processtime)</td>
-      </tr>
-      }
-    </tbody>
-    </table>
-  }
-  function bytesize{
-    var sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    if (data == 0) return '0 Byte';
-    var i = parseInt(Math.floor(Math.log(data) / Math.log(1024)));
-    return Math.round(data / Math.pow(1024, i), 2) + ' ' + sizes[i];
-  }
+	view results{
+		@{
+			this.chartData = [];
+		}
+		<div id="graphs"></div>
+		<table>
+		<thead>
+		<tr>
+			<th>Status</th>
+			<th>HTTPS</th>
+			<th>URL</th>
+			<th>TTFB</th>
+			<th>DL</th>
+			<th>Total</th>
+			<th>Size</th>
+			<th>Speed</th>
+			<th>Parse Time</th>
+			</tr>
+		</thead>
+		<tbody>
+			@for(var i = 0; i < Math.min(1000, data.length); i++) {
+				@{
+					var rep = data[i];
+					var dl = Math.max(1, rep.time - rep.ttfb);
+					var r = Math.ceil(rep.ttfb/10) * 10;
+					this.chartData.push([rep.startTime, rep.ttfb, 'http' + (rep.secure?'s':'') + '://' + rep.host + rep.path])
+				}
+				<tr>
+					<td>@(rep.status)</td>
+					<td>@((rep.secure?'✔':''))</td>
+					<td>
+						<span class="domain">@(rep.host)</span>
+						<span class="path">@(rep.path)</span>
+					</td>
+					<td>@(rep.ttfb) ms</td>
+					<td>@(dl) ms</td>
+					<td>@(rep.time) ms</td>
+					<td>@(this.bytesize(rep.size))</td>
+					<td>@(this.bytesize((rep.size/dl)*1000))/s</td>
+					<td>@(rep.parsetime) ms</td>
+				</tr>
+			}
+		</tbody>
+		</table>
+	}
+	function bytesize{
+		var sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+		if (data == 0) return '0 Byte';
+		var i = parseInt(Math.floor(Math.log(data) / Math.log(1024)));
+		return Math.round(data / Math.pow(1024, i), 2) + ' ' + sizes[i];
+	}
 }

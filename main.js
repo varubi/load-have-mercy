@@ -1,47 +1,53 @@
-const { app, BrowserWindow } = require('electron'),
+const { app, BrowserWindow, webContents, session } = require('electron'),
     path = require('path'),
     url = require('url'),
+    cp = require('child_process'),
+    parser = cp.fork('./src/parser.js'),
     appcode = require('./src/appcode.js');
 
-let window, client = new appcode.Client();
-client.on('done', () => { window.webContents.send('client.done') })
-client.on('kmod', (obj) => { window.webContents.send('client.kmod', obj) })
-client.on('parseStart', (obj) => { window.webContents.send('client.parseStart', obj) });
+let mainWindow, client = new appcode.Client(parser);
+client.on('done', () => { mainWindow.webContents.send('client.done') })
+client.on('kmod', (obj) => { mainWindow.webContents.send('client.kmod', obj) })
+client.on('parseStart', (obj) => { mainWindow.webContents.send('client.parseStart', obj) });
+
+parser.on('close', (x) => { console.log(x) })
+parser.on('exit', (x) => { console.log(x) })
+parser.on('error', (x) => { console.log(x) })
+parser.on('disconnect', (x) => { console.log(x) })
+
 
 function createWindow() {
-    // Create the browser window.
-    window = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 1200,
         height: 900,
         title: 'Load Have Mercy'
     })
 
-    window.setMenu(null);
+    mainWindow.setMenu(null);
 
-    window.loadURL(url.format({
+    mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'views', 'index.html'),
         protocol: 'file:',
         slashes: true
     }))
 
-    window.webContents.openDevTools()
-
-    window.on('closed', () => { win = null })
+    mainWindow.webContents.openDevTools()
+    mainWindow.on('closed', () => { mainWindow = null })
 }
 
 app.on('ready', createWindow)
 app.on('window-all-closed', () => { process.platform !== 'darwin' && app.quit() })
-app.on('activate', () => { win === null && createWindow() })
+app.on('activate', () => { mainWindow === null && createWindow() })
 
 
 
 exports.crawl = function (config) {
-    client.crawl(config.base_url)
-    client.url_limit = config.url_limit;
-    client.url_passes = config.url_passes;
-    client.request_maxpersecond = config.request_maxpersecond;
-    client.request_limit = config.request_limit;
-    client.run();
+    ses = session.fromPartition('electron');
+    ses.cookies.get({}, (error, cookies) => {
+        config.cookies = cookies;
+        client.crawl(config)
+        client.run();
+    })
 };
 
 exports.view = function () {

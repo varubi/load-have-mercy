@@ -1,11 +1,13 @@
 const fs = require('fs')
 
-function Queue() {
+function Queue(protocols) {
     this.count = 0;
-    this.list = {
-        'http:': {},
-        'https:': {}
-    };
+    this.list = {};
+
+    protocols = (protocols || 'http,https').split(',');
+    for (var i = 0; i < protocols.length; i++) {
+        this.list[protocols[i].trim() + ':'] = Object.create(null);
+    }
     this.queue = [];
 }
 Queue.prototype.insert = function (href) {
@@ -24,16 +26,32 @@ Queue.prototype.get = function () {
     return this.queue.shift();
 }
 Queue.prototype.clone = function () {
-
     var cloned = new Queue();
     cloned.count = this.count;
-
 }
-function CookieJar() {
+
+function CookieJar(cookies) {
     this.domains = {};
-    this.lax = {};
+    if (Array.isArray(cookies) && cookies.length)
+        this.load(cookies)
 }
+CookieJar.prototype.load = function (cookies) {
+    for (var i = 0; i < cookies.length; i++) {
+        cookie = {};
+        cookie.domain = cookies[i].domain;
+        cookie.path = cookies[i].path;
+        cookie.name = cookies[i].name;
+        cookie.value = cookies[i].value;
+        cookie.domainrev = cookies[i].domain.split('').reverse().join('');
+        if (cookies[i].secure)
+            cookie.secure = '';
 
+        if (!this.domains[cookie.domainrev])
+            this.domains[cookie.domainrev] = {};
+        this.domains[cookie.domainrev][cookie.name] = cookie;
+
+    }
+}
 CookieJar.prototype.set = function (referrer, cookies) {
     if (!cookies)
         return;
@@ -67,15 +85,17 @@ CookieJar.prototype.set = function (referrer, cookies) {
     function parseCookie(cookie) {
         var data = cookie.split(';');
         var kv = data.shift().split('=');
-        var cookie = {
-            name: kv[0],
-            value: kv[1] || '',
-        };
+        var cookie = {};
+        cookie.name = kv.shift();
+        cookie.value = kv.join('=');
         while (data.length) {
-            kv = data.shift().split('=')
+            var kv = data.shift().split('=')
             kv[0] = kv[0].toLowerCase();
-            if (['path', 'secure', 'domain', 'samesite'].indexOf(kv[0]))
-                cookie[kv[0]] = cookie[kv[1]];
+            var key = kv[0].trim().toLowerCase();
+            if (['path', 'domain'].indexOf(key) >= 0)
+                cookie[key] = (kv[1] || '').trim();
+            else if (['secure', '__secure'].indexOf(key) >= 0)
+                cookie[key] = !!(1 * 1);
         }
         if (cookie.domain)
             cookie.domainrev = cookie.domain.split('').reverse().join('')
@@ -109,43 +129,34 @@ CookieJar.prototype.get = function (referrer) {
     }
     return cookies.join('; ')
 }
+
 function Log() {
     this.history = [];
 }
 Log.prototype.write = function (stats) {
     this.history.push(stats);
 }
-
-Log.prototype.view = function (sort, limit) {
+Log.prototype.view = function (limit, sort, direction) {
     var results = [];
     limit = limit || this.history.length;
-    console.log(limit)
-    if (sort) {
-        for (var i = 0; i < this.history.length; i++) {
-            results.push(this.history[i]);
-        }
-        results.sort((a, b) => {
-            var v1 = a[sort] || '';
-            var v2 = b[sort] || '';
+    sort = sort || 'path';
+    direction = direction || 1;
 
-            if (v1 < v2)
-                return -1;
-
-            if (v1 > v2)
-                return 1;
-
-            return 0;
-        })
-        results.slice(0, limit - 1)
-    } else {
-        for (var i = 0; i < limit; i++) {
-            results.push(this.history[i]);
-        }
+    for (var i = 0; i < this.history.length; i++) {
+        results.push(this.history[i]);
     }
-    return results;
+    results.sort((a, b) => {
+        var v1 = a[sort] || '';
+        var v2 = b[sort] || '';
+
+        if (v1 == v2)
+            return 0;
+        return (v1 > v2 ? 1 : -1) * direction;
+
+    })
+    return results.slice(0, limit - 1);
 
 }
-
 
 exports.Queue = Queue;
 exports.CookieJar = CookieJar;
