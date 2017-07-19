@@ -13,70 +13,78 @@
 
 <body>
   <div id="mainbar">
-    <input id="urlbar" type="text" value="https://www.google.com" spellcheck="false" onfocus=" document.getElementById('config').classList.add('active')">
-    <div id="stats">
+    <button id="btn_browser">Browser</button>
+    <button id="btn_config">Config</button>
+    <button id="btn_result" class="postresult">Results</button>
+    <div id="stats" class="postresult">
       <div class="stat">
-        <div class="title">Total</div>
-        <div class="value" stat="Total">0</div>
+        <div class="title">Requests</div>
+        <div class="value" stat="Total"></div>
       </div>
       <div class="stat">
-        <div class="title">Time</div>
-        <div class="value" stat="Time">0</div>
+        <div class="title">Elapsed</div>
+        <div class="value" stat="Time"></div>
       </div>
     </div>
   </div>
-  <div id="config" class="active">
-    <div class="options">
-      <div>
+  <div id="chromebtns">
+    <button id="chrome-minimize" class="chrome-btn">_</button>
+    <button id="chrome-maximize" class="chrome-btn">O</button>
+    <button id="chrome-close" class="chrome-btn">X</button>
+  </div>
+  <div id="viewport">
+    <div id="overlay"><span>0 Requests</span></div>
+    <div id="config" class="halfpane">
+      <div class="options">
         <label>
-				<span>Max URLs To Crawl</span>
-				<input id="url_limit" type="number" min="0" value="100">
-			</label>
+          <span>Max URLs To Crawl</span>
+          <input id="url_limit" type="number" min="0" value="100">
+        </label>
         <label>
-				<span>Max Requests Per Second</span>
-				<input id="request_maxpersecond" type="number" min="1" max="100" value="10">
-			</label>
+          <span>Max Requests Per Second</span>
+          <input id="request_maxpersecond" type="number" min="1" max="100" value="10">
+        </label>
         <label>
-				<span>Max Requests Open</span>
-				<input id="request_limit" type="number" min="1" max="100" value="10">
-			</label>
+          <span>Max Requests Open</span>
+          <input id="request_limit" type="number" min="1" max="100" value="10">
+        </label>
+
+        <label>
+          <span>Follow External Domains</span>
+          <input id="domains_external" type="checkbox">
+        </label>
+        <label>
+          <span>Follow Subdomains</span>
+          <input id="domains_sub" type="checkbox" checked="checked">
+        </label>
+        <label>
+          <span>Case Sensitive</span>
+          <input id="case_sensitive" type="checkbox">
+        </label>
+        <label>
+          <span>Protocols</span>
+          <span>
+            <select id="protocols">
+              <option value="https,http">HTTP / HTTPS</option>
+              <option value="https">HTTPS</option>
+              <option value="http">HTTP</option>
+            </select>
+          </span>
+        </label>
       </div>
-      <div>
-        <label>
-				<span>Follow External Domains</span>
-				<input id="domains_external" type="checkbox">
-			</label>
-        <label>
-				<span>Follow Subdomains</span>
-				<input id="domains_sub" type="checkbox" checked="checked">
-			</label>
-        <label>
-				<span>Case Sensitive</span>
-				<input id="case_sensitive" type="checkbox">
-			</label>
+      <button class="minimize" onclick="this.parentNode.classList.remove('active')"><span>‹</span></button>
+    </div>
+    <div id="results" class="fullpane"></div>
+    <div id="browser" class="fullpane active">
+      <div id="browserinfo" class="content-head">
+        <input id="urlbar" type="text" value="https://www.google.com" spellcheck="false">
+        <button class="n1" onclick="run()">Go!</button>
+        <button class="n1" onclick="load()">Load</button>
       </div>
-      <div>
-        <label>
-				<span>Protocols</span>
-				<span>
-					<select id="protocols">
-						<option value="https,http">HTTP / HTTPS</option>
-						<option value="https">HTTPS</option>
-						<option value="http">HTTP</option>
-					</select>
-				</span>
-			</label>
+      <div class="content-body">
+        <webview id="webview" partition="electron" src="https://github.com"></webview>
       </div>
     </div>
-    <button class="n1" onclick="run()">Go!</button>
-    <button class="n1" onclick="load()">Load</button>
-    <button class="minimize" onclick="this.parentNode.classList.remove('active')"><span>‹</span></button>
-  </div>
-  <div id="results"></div>
-  <div id="overlay"><span>0 Requests</span></div>
-  <div id="browser" class="active" active="browserinfo">
-    <div id="browserinfo"></div>
-    <webview id="webview" partition="electron" src="https://github.com"></webview>
   </div>
 </body>
 

@@ -155,7 +155,14 @@ Log.prototype.view = function (limit, sort, direction) {
 
     })
     return results.slice(0, limit - 1);
-
+}
+Log.prototype.query = function (match, flags) {
+    var results = [];
+    var regex = new RegExp(match, flags);
+    for (var i = 0; i < this.history.length; i++) {
+        if (regex.test('http' + (this.history[i].secure ? 's' : '') + ':\\' + this.history[i].host + this.history[i].path))
+            results.push(this.history[i]);
+    }
 }
 
 exports.Queue = Queue;

@@ -2,7 +2,9 @@ var views = views || {};
 views.results = function(data){
 	var $O = '';
 	this.chartData = [];
-	$O += '<div id="graphs"></div>\n'
+	$O += '<div class="content-head">Results</div>\n'
+		+ '<div class="content-body">\n'
+		+ '<div id="graphs"></div>\n'
 		+ '<table>\n'
 		+ '<thead>\n'
 		+ '<tr>\n'
@@ -40,7 +42,8 @@ views.results = function(data){
 	}
 	$O += '\n'
 		+ '</tbody>\n'
-		+ '</table>\n';
+		+ '</table>\n'
+		+ '</div>\n';
 	return $O;
 };
 views.bytesize = function(data){

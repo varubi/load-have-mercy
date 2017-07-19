@@ -20,7 +20,10 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 900,
-        title: 'Load Have Mercy'
+        'minHeight': 800,
+        'minWidth': 1024,
+        title: 'Load Have Mercy',
+        frame: false
     })
 
     mainWindow.setMenu(null);
@@ -52,6 +55,9 @@ exports.crawl = function (config) {
 
 exports.view = function () {
     return client.log.view();
+};
+exports.query = function (match, flags) {
+    return client.log.query(match, flags);
 };
 exports.parseComplete = function (obj) {
     client.parseComplete(obj);

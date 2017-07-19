@@ -4,12 +4,27 @@ body {
   padding: 0;
   margin: 0;
   font-family: 'Ubuntu', sans-serif;
+  color: #222;
+  background: #EEE;
 }
 * {
   box-sizing: border-box;
 }
+*::-webkit-scrollbar {
+  width: 7px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #31ACED;
+}
+*::-webkit-scrollbar-track {
+  background: none;
+}
+.postresult {
+  display: none;
+}
 select,
 input {
+  -webkit-app-region: no-drag;
   font-family: 'Cantarell', sans-serif;
   border: none;
   background: none;
@@ -27,6 +42,7 @@ input:focus {
   border-bottom-color: #31ACED;
 }
 button {
+  -webkit-app-region: no-drag;
   cursor: pointer;
 }
 button.n1 {
@@ -44,53 +60,38 @@ button.n2 {
 #mainbar {
   color: #DDD;
   background: #222;
-  border: solid 1px #222;
-  box-shadow: 4px 4px 3px -1px rgba(0, 0, 0, 0.07);
+  box-shadow: 2px 4px 2px 1px rgba(0, 0, 0, 0.4);
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  height: 100px;
+  bottom: 0;
+  width: 100px;
   z-index: 1000;
+  font-size: 14px;
 }
-#mainbar #urlbar {
-  position: absolute;
-  display: block;
-  font-size: 24px;
-  height: 40px;
-  min-width: 400px;
-  padding: 0 10px;
-  line-height: 40px;
+#mainbar button {
+  -webkit-user-select: none;
+  width: 100%;
+  min-height: 75px;
+  padding: 10px 0;
+  background: none;
+  border: none;
+  color: #FFF;
   font-weight: bold;
-  top: 50%;
-  left: 50%;
-  color: #EFD951;
-  transform: translateX(-50%) translateY(-50%);
-  transition: all 1s;
+  font-family: Ubuntu, sans-serif;
+  font-size: 14px;
 }
-#mainbar #urlbar:focus {
-  color: inherit;
-}
-#mainbar #urlbar:disabled {
-  left: 10px;
-  transform: translateX(0%) translateY(-50%);
-}
-#mainbar #urlbar.error {
-  color: #FF2828;
+#mainbar button:focus {
+  outline: none;
 }
 #mainbar #stats {
-  display: flex;
-  position: fixed;
-  right: 0;
-  top: 0;
-  padding: 10px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 #mainbar #stats .stat {
-  min-width: 100px;
   text-align: center;
-}
-#mainbar #stats .stat + .stat {
-  border-left: solid 1px #FFF;
+  padding: 10px 0;
 }
 #mainbar #stats .stat .title {
   font-weight: bold;
@@ -100,13 +101,13 @@ button.n2 {
 }
 #config {
   position: fixed;
-  top: -50%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 20px 10px 10px;
+  top: 0;
+  bottom: 0;
+  left: -50%;
+  padding: 10px 20px;
   z-index: 900;
   transition: all 1s;
-  width: 100%;
+  width: calc(50% - 100px);
   color: #222;
   background: #EEE;
   border: solid 1px #CCC;
@@ -114,19 +115,15 @@ button.n2 {
 }
 #config > .options {
   width: 100%;
-  display: flex;
-  justify-content: space-around;
-}
-#config > .options div {
   display: table;
-  width: 30%;
 }
 #config.active {
-  top: 90px;
+  left: 90px;
 }
 #config label {
   display: table-row;
   height: 50px;
+  width: 100%;
   line-height: 50px;
 }
 #config label > * {
@@ -165,16 +162,17 @@ button.n2 {
   border-color: #31ACED;
   content: '✔';
 }
-#config button.n1 {
-  padding: 10px 20px;
-  float: right;
-}
 #config button.minimize {
   background: none;
   border: none;
-  width: 100%;
-  padding: 10px 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  height: 100%;
   overflow: hidden;
+  padding: 0;
+  color: #AAA;
 }
 #config button.minimize:focus {
   outline: none;
@@ -183,53 +181,81 @@ button.n2 {
   display: block;
   margin: auto;
   text-align: center;
-  transform: rotate(90deg);
   font-size: 50px;
-  line-height: 10px;
-  color: #AAA;
 }
-#config button.minimize span:hover {
+#config button.minimize:hover {
   color: #31ACED;
 }
-#browser {
+#viewport {
   position: fixed;
-  left: 0;
-  right: 0;
-  overflow: auto;
-  top: -110%;
-  bottom: 100%;
-  transition: all 1s;
-}
-#browser.active {
-  top: 100px;
+  top: 0;
   bottom: 0;
+  left: 100px;
+  right: 0;
 }
-#browser[active="browserinfo"] #browserinfo {
-  display: block;
-  opacity: 1;
-}
-#browser #browserinfo,
-#browser #webview {
+#viewport .fullpane {
   position: absolute;
   top: 0;
-  left: 0;
   bottom: 0;
+  left: -110%;
+  transition: all 1s;
+  width: 100%;
+  height: 100%;
+  box-shadow: 2px 4px 2px 1px rgba(0, 0, 0, 0.4);
+}
+#viewport .fullpane.active {
+  left: 0;
+}
+#viewport .content-head {
+  -webkit-app-region: drag;
+  position: absolute;
+  top: 0px;
+  height: 50px;
+  left: 0;
+  right: 165px;
+}
+#viewport .content-body {
+  position: absolute;
+  top: 50px;
+  left: 0;
   right: 0;
+  bottom: 0;
+  overflow-y: auto;
+}
+#browser #webview {
+  height: 100%;
+  width: 100%;
 }
 #browser #browserinfo {
-  display: none;
-  opacity: 0;
   color: #222;
   background: #EEE;
   transition: all 1s;
 }
+#browser #browserinfo button,
+#browser #browserinfo input {
+  height: 40px;
+  padding: 0 10px;
+  line-height: 40px;
+  margin: 5px;
+  transition: all 1s;
+  vertical-align: top;
+}
+#browser #browserinfo input {
+  font-size: 18px;
+  min-width: 400px;
+  font-weight: bold;
+}
+#browser #browserinfo input:focus {
+  color: inherit;
+}
+#browser #browserinfo input.error {
+  color: #FF2828;
+}
 #results {
-  position: fixed;
-  top: 100px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: auto;
+  background: #FFF;
+}
+#results .content-body {
+  padding-left: 7px;
 }
 #results #graphs {
   width: 100%;
@@ -248,7 +274,6 @@ button.n2 {
 #results table th {
   color: #222;
   background: #EEE;
-  position: sticky;
   top: 0;
   padding: 10px;
 }
@@ -273,7 +298,11 @@ button.n2 {
 #results table td:nth-child(9) {
   text-align: right;
 }
+#overlay {
+  display: none;
+}
 #overlay.active {
+  display: block;
   position: fixed;
   top: 0;
   left: 0;
@@ -301,4 +330,30 @@ button.n2 {
   font-weight: bold;
   color: #FFF;
   text-shadow: 2px 2px #555;
+}
+#chromebtns {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  -webkit-user-select: none;
+  font-size: 0;
+}
+#chromebtns .chrome-btn {
+  color: #DDD;
+  background: #222;
+  border: none;
+  width: 60px;
+  height: 30px;
+  line-height: 30px;
+  display: inline-block;
+  box-shadow: 4px 4px 3px -1px rgba(0, 0, 0, 0.07);
+  margin: 0;
+  text-align: center;
+}
+#chromebtns .chrome-btn:focus {
+  outline: none;
+}
+#chromebtns .chrome-btn:hover {
+  background: #31ACED;
 }

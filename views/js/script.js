@@ -1,16 +1,22 @@
 
 var $Q = (q) => document.querySelector(q),
-    $QA = (q) => document.querySelectorAll(q)
-    , requestsmade = 0;
+    $QA = (q) => document.querySelectorAll(q),
+    requestsmade = 0;
 
 app.incoming.on('client.done', function (event, message) {
     var results = app.outgoing.view();
     var t = (Date.now() - $Q('[stat="Time"]').startTime);
+    $QA('.postresult').forEach((element) => {
+        element.classList.remove('postresult')
+    });
+
     $Q('[stat="Time"]').innerHTML = t >= 3000000 ? Math.ceil(t / 60000) + ' m' : Math.ceil(t / 1000) + ' s';
     $Q('[stat="Total"]').innerHTML = results.length;
     $Q('#results').innerHTML = views.results(results);
     $Q('#overlay').classList.remove('active')
     drawchart();
+    showFullPane('results');
+
 });
 
 app.incoming.on('client.kmod', function (event, message) {
@@ -23,17 +29,50 @@ document.addEventListener('DOMContentLoaded', function () {
     $Q('#webview').addEventListener('did-navigate', () => {
         $Q('#urlbar').value = $Q('#webview').getURL();
         $Q('#urlbar').classList.remove('error');
-        $Q('#browser').setAttribute('active', 'webview');
     })
     $Q('#webview').addEventListener('did-fail-load', () => {
         $Q('#urlbar').classList.add('error');
-        $Q('#browser').setAttribute('active', 'browserinfo');
     })
+    $Q('#urlbar').addEventListener('keydown', (e) => {
+        if (e.keyCode == 13) {
+            $Q('#urlbar').blur();
+            load();
+        }
+    });
+    $Q('#btn_browser').addEventListener('click', (e) => {
+        showFullPane('browser');
+    })
+    $Q('#btn_config').addEventListener('click', (e) => {
+        showHalfPane('config')
+    })
+    $Q('#btn_result').addEventListener('click', (e) => {
+        showFullPane('results')
+    })
+
+    $Q('#chrome-minimize').addEventListener('click', function (e) {
+        var window = app.remote.getCurrentWindow();
+        window.minimize();
+    });
+
+    $Q('#chrome-maximize').addEventListener('click', function (e) {
+        var window = app.remote.getCurrentWindow();
+        if (!window.isMaximized()) {
+            window.maximize();
+        } else {
+            window.unmaximize();
+        }
+    });
+
+    $Q('#chrome-close').addEventListener('click', function (e) {
+        var window = app.remote.getCurrentWindow();
+        window.close();
+    });
+
 })
 
 
 function run() {
-    $Q('#browser').classList.remove('active')
+    showFullPane()
     $Q('#config').classList.remove('active');
     $Q('#overlay').classList.add('active');
     $Q('#overlay').innerHTML = '<span>0</span>';
@@ -58,8 +97,9 @@ function load() {
     if (!/^[A-Za-z\d]+:\/\//.test($Q('#urlbar').value)) {
         $Q('#urlbar').value = 'http://' + $Q('#urlbar').value;
     }
-    $Q('#browser').classList.add('active')
     $Q('#webview').loadURL($Q('#urlbar').value);
+    showFullPane('browser');
+
 
 }
 function drawchart() {
@@ -82,4 +122,15 @@ function drawchart() {
 
     var chart = new google.charts.Scatter($Q('#graphs'));
     chart.draw(graph, google.charts.Scatter.convertOptions(options));
+}
+function showFullPane(target) {
+    $QA('.fullpane').forEach((el) => {
+        el.classList.toggle('active', !!(el.id == target));
+    });
+    showHalfPane();
+}
+function showHalfPane(target) {
+    $QA('.halfpane').forEach((el) => {
+        el.classList.toggle('active', !!(el.id == target));
+    });
 }

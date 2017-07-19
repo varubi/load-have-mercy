@@ -142,7 +142,7 @@ Client.prototype.run = function () {
     var self = this;
     var start = Date.now();
     if (!href) {
-        return !this.request_open && start - self.request_last > 10000 && this.stop();
+        return !this.request_open && (this.request_completed == this.counter || start - self.request_last > 10000) && this.stop();
     }
     var options = {
         host: href.host,

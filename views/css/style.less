@@ -3,13 +3,28 @@ html,body{
     padding: 0;
     margin: 0;
     font-family: 'Ubuntu', sans-serif;
-
+    #pane>.n2>.inner();
 }
 *{
     box-sizing: border-box;
+    &::-webkit-scrollbar {
+        width: 7px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background: @color_primary; 
+    }
+
+    &::-webkit-scrollbar-track {
+        background: none; 
+    }
+}
+.postresult{
+    display: none;
 }
 select,
 input{
+    -webkit-app-region: no-drag;
     font-family: 'Cantarell', sans-serif;
     border: none;
     background: none;
@@ -25,6 +40,7 @@ input{
     }
 }
 button{
+    -webkit-app-region: no-drag;
     cursor: pointer;
     &.n1{
         #btn>.n1>.inner();
@@ -38,50 +54,38 @@ button{
 
 #mainbar{
     #pane>.n1>.inner();
-    #pane>.n1>.outer();
+    box-shadow: @boxshadow-right;
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    height: 100px;
+    bottom:0;
+    width: 100px;
     z-index: 1000;
-    #urlbar{
-        position: absolute;
-        display: block;
-        font-size: 24px;
-        height: 40px;
-        min-width: 400px;
-        padding: 0 10px;
-        line-height: 40px;
-        font-weight: bold;
-        top: 50%;
-        left: 50%;
-        color:@color_secondary;
-        transform: translateX(-50%)  translateY(-50%);
-        transition: all 1s;
+    font-size: 14px;
+    button{
+        -webkit-user-select: none;
+        width: 100%;
+        min-height: 75px;
+        padding: 10px 0;
+        background: none;
+        border: none;
+        color:#FFF;
+        font-weight: bold;        
+        font-family: Ubuntu, sans-serif;
+        font-size: 14px;
+        
         &:focus{
-            color: inherit;
-        }
-        &:disabled{
-            left: 10px;            
-            transform: translateX(0%)  translateY(-50%);
-        }
-        &.error{
-            color: @color_negative;
+            outline: none;
         }
     }
     #stats{
-        display: flex;
-        position: fixed;
-        right: 0;
-        top: 0;
-        padding: 10px;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
         .stat{            
-            min-width: 100px;
             text-align: center;
-            &+.stat{
-                border-left: solid 1px #FFF;
-            }
+            padding: 10px 0;
+            
             .title{
                 font-weight: bold;
             }
@@ -93,30 +97,26 @@ button{
 }
 #config{
     position: fixed;
-    top: -50%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 20px 10px 10px;
+    top: 0;
+    bottom: 0;
+    left: -50%;
+    padding: 10px 20px;
     z-index: 900;
     transition: all 1s;
-    width: 100%;
+    width: ~"calc(50% - 100px)";
     #pane>.n2>.inner();
     #pane>.n2>.outer();
     &>.options{   
         width: 100%;
-        display: flex;
-        justify-content: space-around;
-        div{     
-            display: table;
-            width: 30%;          
-        }
+        display: table;
     }
     &.active{
-        top: 90px;
+        left: 90px;
     }
     label{
         display: table-row;
         height: 50px;
+        width: 100%;
         line-height: 50px;
         &>*{
             display: table-cell;
@@ -155,16 +155,17 @@ button{
             }
         }
     }
-    button.n1{
-        padding: 10px 20px;
-        float: right;
-    }
     button.minimize{
         background: none;
         border: none;
-        width: 100%;
-        padding: 10px 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        height: 100%;
         overflow: hidden;
+        padding: 0;
+        color: #AAA;
         &:focus {
             outline: none;
         }
@@ -172,60 +173,92 @@ button{
             display: block;
             margin: auto;
             text-align: center;
-            transform: rotate(90deg);
-            font-size: 50px;
-            line-height: 10px;
-            color: #AAA;
-            &:hover{
-                color: @color_primary;
+            font-size: 50px;    
+        }
+        &:hover{
+            color: @color_primary;
+        }
+    }
+}
+#viewport{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left:100px;
+    right: 0;
+    .fullpane{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -110%;
+        transition: all 1s;
+        width: 100%;
+        height: 100%;
+        box-shadow: @boxshadow-right;
+        
+        &.active{
+            left: 0;
+        }
+    }
+    .content-head{
+        -webkit-app-region: drag;
+        position: absolute;
+        top: 0px;
+        height: 50px;
+        left: 0;
+        right: 165px;
+    }
+    .content-body{
+        position: absolute;
+        top: 50px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow-y: auto;
+    }
+}
+#browser{
+    #webview{
+        height: 100%;
+        width: 100%;
+    }
+    #browserinfo{
+        #pane>.n2>.inner();
+        transition: all 1s;        
+        button, input{
+            height: 40px;
+            padding: 0 10px;
+            line-height: 40px;
+            margin: 5px;
+            transition: all 1s;
+            vertical-align: top;
+        }
+        input{
+            font-size: 18px;
+            min-width: 400px;
+            font-weight: bold;
+            &:focus{
+                color: inherit;
+            }
+            &.error{
+                color: @color_negative;
             }
         }
     }
 }
-#browser{
-    position: fixed;
-    left: 0;
-    right: 0;
-    overflow: auto;
-    top: -110%;
-    bottom: 100%;
-    transition: all 1s;
-    
-    &.active{
-        top: 100px;
-        bottom: 0;
-    }
-    &[active="browserinfo"]{
-        #browserinfo{
-            display: block;
-            opacity: 1;
-        }
-    }
-    #browserinfo, #webview{
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-    }
-    #browserinfo{
-        display: none;
-        opacity: 0;
-        #pane>.n2>.inner();
-        transition: all 1s;
-    }
-}
 
 #results{
-    position: fixed;
-    top: 100px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: auto;
+    .content-body{        
+        padding-left: 7px;
+    }
+    background: #FFF;
     #graphs{
         width: 100%; 
         min-height: 450px;
+    }
+    &.active{
+        table th{
+        }
     }
     table{
         width: 100%;
@@ -239,7 +272,6 @@ button{
         }
         th{
             #pane>.n2>.inner();
-            position: sticky;
             top: 0;
             padding: 10px;
         }
@@ -267,8 +299,11 @@ button{
         }
     }
 }
-
+#overlay{
+    display: none;
+}
 #overlay.active {
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
@@ -302,6 +337,8 @@ button{
 @color_secondary: #EFD951;
 @color_negative: #FF2828;
 @boxshadow: 4px 4px 3px -1px rgba(0, 0, 0, 0.07);
+@boxshadow-right: 2px 4px 2px 1px rgba(0,0,0,0.4);
+
 
 
 #btn{
@@ -367,6 +404,31 @@ button{
         .outer(){
             border: solid 1px #CCC;
             box-shadow: @boxshadow;
+        }
+    }
+}
+#chromebtns{
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    -webkit-user-select: none;
+    font-size: 0;
+    .chrome-btn {
+        #pane>.n1>.inner();
+        border: none;
+        width: 60px;
+        height: 30px;
+        line-height: 30px;
+        display: inline-block;
+        box-shadow: @boxshadow;
+        margin: 0;
+        text-align: center;
+        &:focus{
+            outline: none;
+        }
+        &:hover{
+            background: @color_primary;
         }
     }
 }
