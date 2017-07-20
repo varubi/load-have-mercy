@@ -26,12 +26,15 @@ app.incoming.on('client.kmod', function (event, message) {
 window.addEventListener('resize', function () { drawchart(); });
 document.addEventListener('DOMContentLoaded', function () {
     google.charts.load('current', { 'packages': ['scatter'] });
-    $Q('#webview').addEventListener('did-navigate', () => {
-        $Q('#urlbar').value = $Q('#webview').getURL();
+    var webv = $Q('#webview');
+    webv.addEventListener('did-navigate', () => {
+        $Q('#urlbar').value = webv.getURL();
         $Q('#urlbar').classList.remove('error');
+        nav_buttons();
     })
-    $Q('#webview').addEventListener('did-fail-load', () => {
+    webv.addEventListener('did-fail-load', () => {
         $Q('#urlbar').classList.add('error');
+        nav_buttons();
     })
     $Q('#urlbar').addEventListener('keydown', (e) => {
         if (e.keyCode == 13) {
@@ -48,6 +51,20 @@ document.addEventListener('DOMContentLoaded', function () {
     $Q('#btn_result').addEventListener('click', (e) => {
         showFullPane('results')
     })
+    $Q('#nav_backward').addEventListener('click', (e) => {
+        if (webv.canGoBack()) {
+            webv.goBack();
+        } else {
+            $Q('#nav_backward').classList.add('disabled');
+        }
+    });
+    $Q('#nav_forward').addEventListener('click', (e) => {
+        if (webv.canGoForward()) {
+            webv.goForward();
+        } else {
+            $Q('#nav_forward').classList.add('disabled');
+        }
+    });
 
     $Q('#chrome-minimize').addEventListener('click', function (e) {
         var window = app.remote.getCurrentWindow();
@@ -67,7 +84,10 @@ document.addEventListener('DOMContentLoaded', function () {
         var window = app.remote.getCurrentWindow();
         window.close();
     });
-
+    function nav_buttons() {
+        $Q('#nav_backward').classList.toggle('disabled', !webv.canGoBack());
+        $Q('#nav_forward').classList.toggle('disabled', !webv.canGoForward());
+    }
 })
 
 

@@ -77,9 +77,10 @@
     <div id="results" class="fullpane"></div>
     <div id="browser" class="fullpane active">
       <div id="browserinfo" class="content-head">
+        <button id="nav_backward" class="nav disabled">◀</button>
+        <button id="nav_forward" class="nav disabled">▶</button>
         <input id="urlbar" type="text" value="https://www.google.com" spellcheck="false">
-        <button class="n1" onclick="run()">Go!</button>
-        <button class="n1" onclick="load()">Load</button>
+        <button class="n1" onclick="run()">Crawl</button>
       </div>
       <div class="content-body">
         <webview id="webview" partition="electron" src="https://github.com"></webview>

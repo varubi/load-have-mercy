@@ -212,7 +212,7 @@ button.n2 {
   top: 0px;
   height: 50px;
   left: 0;
-  right: 165px;
+  right: 190px;
 }
 #viewport .content-body {
   position: absolute;
@@ -229,18 +229,36 @@ button.n2 {
 #browser #browserinfo {
   color: #222;
   background: #EEE;
+  font-size: 0;
   transition: all 1s;
+}
+#browser #browserinfo > *:first-child {
+  margin-left: 10px;
+}
+#browser #browserinfo .nav {
+  background: none;
+  text-align: center;
+  width: 40px;
+  outline: none;
+}
+#browser #browserinfo .nav.disabled {
+  color: #AAA;
+}
+#browser #browserinfo .nav:not(.disabled):hover {
+  color: #31ACED;
 }
 #browser #browserinfo button,
 #browser #browserinfo input {
   height: 40px;
   padding: 0 10px;
   line-height: 40px;
-  margin: 5px;
+  margin: 5px 0;
   transition: all 1s;
   vertical-align: top;
+  border: none;
 }
 #browser #browserinfo input {
+  background: #FFF;
   font-size: 18px;
   min-width: 400px;
   font-weight: bold;
@@ -276,6 +294,7 @@ button.n2 {
   background: #EEE;
   top: 0;
   padding: 10px;
+  position: sticky;
 }
 #results table td {
   padding: 5px;
