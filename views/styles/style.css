@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Cantarell:400i|Ubuntu');
 html,
 body {
+  height: 100%;
   padding: 0;
   margin: 0;
+  position: relative;
   font-family: 'Ubuntu', sans-serif;
   color: #222;
   background: #EEE;
@@ -14,7 +16,7 @@ body {
   width: 7px;
 }
 *::-webkit-scrollbar-thumb {
-  background: #31ACED;
+  background: #F2AE72;
 }
 *::-webkit-scrollbar-track {
   background: none;
@@ -39,7 +41,7 @@ select:focus,
 input:focus {
   outline: none;
   color: inherit;
-  border-bottom-color: #31ACED;
+  border-bottom-color: #F2AE72;
 }
 button {
   -webkit-app-region: no-drag;
@@ -47,14 +49,14 @@ button {
 }
 button.n1 {
   color: #FFF;
-  background: #31ACED;
-  border: solid 1px #31ACED;
+  background: #F2AE72;
+  border: solid 1px #F2AE72;
   box-shadow: 4px 4px 3px -1px rgba(0, 0, 0, 0.07);
 }
 button.n2 {
   color: #FFF;
-  background: #EFD951;
-  border: solid 1px #EFD951;
+  background: #F2E394;
+  border: solid 1px #F2E394;
   box-shadow: 4px 4px 3px -1px rgba(0, 0, 0, 0.07);
 }
 #mainbar {
@@ -100,25 +102,15 @@ button.n2 {
   font-size: 32px;
 }
 #config {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: -50%;
-  padding: 10px 20px;
-  z-index: 900;
-  transition: all 1s;
-  width: calc(50% - 100px);
   color: #222;
   background: #EEE;
   border: solid 1px #CCC;
   box-shadow: 4px 4px 3px -1px rgba(0, 0, 0, 0.07);
+  padding: 10px 20px;
 }
 #config > .options {
   width: 100%;
   display: table;
-}
-#config.active {
-  left: 90px;
 }
 #config label {
   display: table-row;
@@ -139,8 +131,11 @@ button.n2 {
   font-weight: bold;
 }
 #config label input[type="number"] {
-  text-align: center;
-  width: 50px;
+  text-align: right;
+  width: 100px;
+}
+#config label input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
 }
 #config label input[type="checkbox"] {
   position: relative;
@@ -159,7 +154,7 @@ button.n2 {
   text-align: center;
 }
 #config label input[type="checkbox"]:checked:before {
-  border-color: #31ACED;
+  border-color: #F2AE72;
   content: '✔';
 }
 #config button.minimize {
@@ -184,7 +179,7 @@ button.n2 {
   font-size: 50px;
 }
 #config button.minimize:hover {
-  color: #31ACED;
+  color: #F2AE72;
 }
 #viewport {
   position: fixed;
@@ -192,19 +187,37 @@ button.n2 {
   bottom: 0;
   left: 100px;
   right: 0;
+  z-index: 100;
 }
+#viewport .halfpane,
 #viewport .fullpane {
+  color: #222;
+  background: #EEE;
   position: absolute;
   top: 0;
   bottom: 0;
-  left: -110%;
-  transition: all 1s;
-  width: 100%;
+  transform: translateX(-110%);
   height: 100%;
   box-shadow: 2px 4px 2px 1px rgba(0, 0, 0, 0.4);
 }
+#viewport .halfpane.active,
 #viewport .fullpane.active {
-  left: 0;
+  transform: translateX(0px);
+}
+#viewport .fullpane {
+  transition: transform 700ms ease-out;
+  width: 100%;
+}
+#viewport .fullpane.active {
+  z-index: 150;
+}
+#viewport .halfpane {
+  transition: transform 350ms ease-out;
+  width: 50%;
+  z-index: 200;
+}
+#viewport .halfpane.active {
+  z-index: 250;
 }
 #viewport .content-head {
   -webkit-app-region: drag;
@@ -214,26 +227,56 @@ button.n2 {
   left: 0;
   right: 190px;
 }
+#viewport .content-head button,
+#viewport .content-head select,
+#viewport .content-head input {
+  -webkit-app-region: no-drag;
+}
 #viewport .content-body {
-  position: absolute;
+  position: fixed;
   top: 50px;
   left: 0;
   right: 0;
   bottom: 0;
-  overflow-y: auto;
+  overflow: auto;
 }
 #browser #webview {
   height: 100%;
   width: 100%;
+  position: absolute;
+}
+#browser #webview-error {
+  background: #D96459;
+  width: 400px;
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+#browser #webview-error:empty {
+  display: none;
 }
 #browser #browserinfo {
   color: #222;
   background: #EEE;
   font-size: 0;
-  transition: all 1s;
+  transition: color 200ms;
 }
 #browser #browserinfo > *:first-child {
   margin-left: 10px;
+}
+#browser #browserinfo #nav_action {
+  font-weight: bold;
+}
+#browser #browserinfo #nav_action[data-action="stop"]:before {
+  content: '✖';
+}
+#browser #browserinfo #nav_action[data-action="reload"]:before {
+  content: '⟳';
 }
 #browser #browserinfo .nav {
   background: none;
@@ -245,7 +288,7 @@ button.n2 {
   color: #AAA;
 }
 #browser #browserinfo .nav:not(.disabled):hover {
-  color: #31ACED;
+  color: #F2AE72;
 }
 #browser #browserinfo button,
 #browser #browserinfo input {
@@ -253,7 +296,7 @@ button.n2 {
   padding: 0 10px;
   line-height: 40px;
   margin: 5px 0;
-  transition: all 1s;
+  transition: color 200ms;
   vertical-align: top;
   border: none;
 }
@@ -267,7 +310,17 @@ button.n2 {
   color: inherit;
 }
 #browser #browserinfo input.error {
-  color: #FF2828;
+  color: #D96459;
+}
+#browser #browserinfo input.internal {
+  color: #AAA;
+}
+#bandwidth-bar {
+  height: 250px;
+  width: 100%;
+}
+#bandwidth-bar .bar {
+  width: calc(1.41666667%);
 }
 #results {
   background: #FFF;
@@ -275,29 +328,64 @@ button.n2 {
 #results .content-body {
   padding-left: 7px;
 }
+#results #jsonresult button {
+  padding: 10px 20px;
+}
+#results #jsonresult button:focus {
+  outline: none;
+}
+#results #jsonresult pre {
+  position: fixed;
+  top: 110%;
+}
 #results #graphs {
   width: 100%;
-  min-height: 450px;
+}
+#results.active table th {
+  position: sticky;
+  z-index: 100;
 }
 #results table {
   width: 100%;
+  background: #FFF;
+  table-layout: fixed;
+  margin: -2px;
 }
-#results table tr:nth-child(even) {
+#results table tbody tr:nth-child(even) {
   color: #222;
   background: #EEE;
 }
-#results table tr:hover {
-  background: #EFD951;
+#results table tbody tr:hover {
+  background: rgba(218, 114, 126, 0.5);
+}
+#results table tbody tr:hover a {
+  color: #FFF;
+  text-decoration: none;
 }
 #results table th {
-  color: #222;
-  background: #EEE;
+  background: #DA727E;
+  color: #FFF;
   top: 0;
-  padding: 10px;
-  position: sticky;
+  padding: 10px 5px;
+  font-weight: 400;
+}
+#results table th:nth-child(1),
+#results table th:nth-child(2) {
+  width: 75px;
+}
+#results table th:nth-child(4),
+#results table th:nth-child(5),
+#results table th:nth-child(6),
+#results table th:nth-child(7),
+#results table th:nth-child(8),
+#results table th:nth-child(9) {
+  width: 75px;
 }
 #results table td {
-  padding: 5px;
+  padding: 10px;
+}
+#results table td a {
+  color: #222;
 }
 #results table td .domain {
   display: block;
@@ -308,6 +396,10 @@ button.n2 {
 #results table td:nth-child(1),
 #results table td:nth-child(2) {
   text-align: center;
+  width: 75px;
+}
+#results table td:nth-child(3) {
+  word-wrap: break-word;
 }
 #results table td:nth-child(4),
 #results table td:nth-child(5),
@@ -315,7 +407,37 @@ button.n2 {
 #results table td:nth-child(7),
 #results table td:nth-child(8),
 #results table td:nth-child(9) {
+  width: 75px;
   text-align: right;
+}
+#infographs #infog1 {
+  margin: auto;
+}
+#infographs #infog1-path {
+  font-weight: bold;
+  font-size: 24px;
+  text-align: center;
+  min-height: 100px;
+}
+#infographs #infog1-visual {
+  position: relative;
+  width: 750px;
+  margin: auto;
+}
+#infographs #infog1-visual path {
+  stroke: #fff;
+}
+#infographs #infog1-tip {
+  position: absolute;
+  top: 260px;
+  left: 305px;
+  width: 140px;
+  text-align: center;
+  color: #666;
+  z-index: -1;
+}
+#infographs #infog1-percentage {
+  font-size: 48px;
 }
 #overlay {
   display: none;
@@ -374,5 +496,5 @@ button.n2 {
   outline: none;
 }
 #chromebtns .chrome-btn:hover {
-  background: #31ACED;
+  background: #F2AE72;
 }

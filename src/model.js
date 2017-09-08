@@ -1,33 +1,65 @@
 const fs = require('fs')
 
-function Queue(protocols) {
-    this.count = 0;
-    this.list = {};
-
-    protocols = (protocols || 'http,https').split(',');
-    for (var i = 0; i < protocols.length; i++) {
-        this.list[protocols[i].trim() + ':'] = Object.create(null);
-    }
-    this.queue = [];
+function DataStore() {
+    this.samples = 0;
+    this.queueId = 0;
+    this.queued = [];
+    this.logs = Object.create(null);
 }
-Queue.prototype.insert = function (href) {
-    if (!this.list[href.protocol])
+DataStore.prototype.queue = function (referrer, href) {
+    if (!this.logs[href.fullpath]) {
+        this.logs[href.fullpath] = {
+            id: this.queued.length,
+            href: href,
+            requests: [],
+            referrers: {},
+            averages: {}
+        };
+        this.queued.push(href);
+    }
+    this.logs[href.fullpath].referrers[referrer] = true;
+}
+DataStore.prototype.reloadQueue = function () {
+    this.queueId = 0;
+}
+DataStore.prototype.getNextUrl = function () {
+    if (this.queueId >= this.queued.length)
         return;
-    if (!this.list[href.protocol][href.host]) {
-        this.list[href.protocol][href.host] = {};
-    }
-    if (!this.list[href.protocol][href.host][href.pathname]) {
-        this.list[href.protocol][href.host][href.pathname] = {};
-        this.queue.push(href);
-        this.count++;
-    }
+    this.queueId++;
+    return this.queued[this.queueId - 1];
 }
-Queue.prototype.get = function () {
-    return this.queue.shift();
+DataStore.prototype.log = function (obj) {
+    var size = Buffer.byteLength(obj.content, 'utf8');
+    this.logs[obj.href.fullpath].requests.push({
+        status: obj.responseStatus,
+        size: size,
+        startTime: obj.startTime,
+        ttfb: obj.ttfb,
+        time: obj.responseTime,
+        parsetime: obj.parseTime,
+    });
 }
-Queue.prototype.clone = function () {
-    var cloned = new Queue();
-    cloned.count = this.count;
+
+DataStore.prototype.view = function (limit, sort, direction) {
+    var keys = Object.keys(this.logs)
+    var results = [];
+    limit = limit || keys.length;
+    sort = sort || 'path';
+    direction = direction || 1;
+    keys.sort();
+    for (var i = 0; i < keys.length; i++) {
+        results.push(this.logs[keys[i]]);
+    }
+    // results.sort((a, b) => {
+    //     var v1 = a[sort] || '';
+    //     var v2 = b[sort] || '';
+
+    //     if (v1 == v2)
+    //         return 0;
+    //     return (v1 > v2 ? 1 : -1) * direction;
+
+    // })
+    return results.slice(0, limit - 1);
 }
 
 function CookieJar(cookies) {
@@ -129,42 +161,21 @@ CookieJar.prototype.get = function (referrer) {
     }
     return cookies.join('; ')
 }
-
-function Log() {
-    this.history = [];
+function KMSEvent(timestamp) {
+    this.requests = {
+        total: 0,
+        opened: 0,
+        closed: 0,
+        active: 0,
+        responses: {
+            0: 0,
+            200: 0
+        },
+        urls: []
+    };
+    this.timestamp = timestamp || Date.now();
+    this.bandwidth = 0;
 }
-Log.prototype.write = function (stats) {
-    this.history.push(stats);
-}
-Log.prototype.view = function (limit, sort, direction) {
-    var results = [];
-    limit = limit || this.history.length;
-    sort = sort || 'path';
-    direction = direction || 1;
-
-    for (var i = 0; i < this.history.length; i++) {
-        results.push(this.history[i]);
-    }
-    results.sort((a, b) => {
-        var v1 = a[sort] || '';
-        var v2 = b[sort] || '';
-
-        if (v1 == v2)
-            return 0;
-        return (v1 > v2 ? 1 : -1) * direction;
-
-    })
-    return results.slice(0, limit - 1);
-}
-Log.prototype.query = function (match, flags) {
-    var results = [];
-    var regex = new RegExp(match, flags);
-    for (var i = 0; i < this.history.length; i++) {
-        if (regex.test('http' + (this.history[i].secure ? 's' : '') + ':\\' + this.history[i].host + this.history[i].path))
-            results.push(this.history[i]);
-    }
-}
-
-exports.Queue = Queue;
+exports.KMSEvent = KMSEvent;
 exports.CookieJar = CookieJar;
-exports.Log = Log;
+exports.DataStore = DataStore;

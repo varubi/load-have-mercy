@@ -2,8 +2,8 @@ const { app, BrowserWindow, webContents, session } = require('electron'),
     path = require('path'),
     url = require('url'),
     cp = require('child_process'),
-    parser = cp.fork('./src/parser.js'),
-    appcode = require('./src/appcode.js');
+    parser = cp.fork(`${__dirname}/src/parser.js`),
+    appcode = require(`${__dirname}/src/appcode.js`);
 
 let mainWindow, client = new appcode.Client(parser);
 client.on('done', () => { mainWindow.webContents.send('client.done') })
@@ -52,12 +52,64 @@ exports.crawl = function (config) {
         client.run();
     })
 };
+exports.getSiteTree = function () {
+    var data = client.database.view();
+    var tree = { name: 'root', children: {}, size: 0 };
+    for (var i = 0; i < data.length; i++) {
+        tree.size++;
+        var path = data[i].href.path.split('/');
+        var ref = travi(tree, data[i].href.protocol);
+        ref = travi(ref, data[i].href.host);
+        for (var ii = 1; ii < Math.min(3, path.length); ii++) {
+            if (!path[ii])
+                break;
+            ref = travi(ref, path[ii])
+        }
+    }
+    for (var key in tree.children)
+        otherfy(tree.children[key]);
+    childAry(tree)
+    return tree;
+    function otherfy(ref) {
+        var size = 0;
+        for (var key in ref.children) {
+            if (ref.children[key].size < .1 * ref.size) {
+                size += ref.children[key].size;
+                delete ref.children[key]
+            } else {
+                otherfy(ref.children[key])
+            }
+        }
+        if (size > 0)
+            ref.children['...'] = { name: '...', size: size, children: {} };
+    }
+    function childAry(ref) {
+        var children = [];
+        for (var key in ref.children) {
+            childAry(ref.children[key])
+            children.push(ref.children[key])
+        }
+        ref.children = children;
+        if (ref.children.length)
+            delete ref.size;
+    }
+    function travi(ref, key) {
+        if (!ref.children[key])
+            ref.children[key] = {
+                name: key,
+                size: 0,
+                children: {}
+            }
+        ref.children[key].size++;
+        return ref.children[key];
+    }
 
+}
 exports.view = function () {
-    return client.log.view();
+    return client.database.view();
 };
 exports.query = function (match, flags) {
-    return client.log.query(match, flags);
+    return client.database.query(match, flags);
 };
 exports.parseComplete = function (obj) {
     client.parseComplete(obj);

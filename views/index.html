@@ -4,18 +4,19 @@
 <head>
   <meta charset="utf-8">
   <title></title>
-  <script src="./js/electron.js" charset="utf-8"></script>
-  <script src="./js/views.js" charset="utf-8"></script>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script src="./js/script.js" charset="utf-8"></script>
-  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="./scripts/electron.js" charset="utf-8"></script>
+  <script src="./scripts/views.js" charset="utf-8"></script>
+  <script src="./scripts/infographs.js" charset="utf-8"></script>
+  <script src="./scripts/script.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="./styles/style.css">
 </head>
 
 <body>
   <div id="mainbar">
-    <button id="btn_browser">Browser</button>
-    <button id="btn_config">Config</button>
-    <button id="btn_result" class="postresult">Results</button>
+    <button class="fullpane_btn" data-pane="browser">Browser</button>
+    <button class="fullpane_btn postresult" data-pane="results">Results</button>
+    <button class="fullpane_btn postresult" data-pane="infographs">Infograph</button>
     <div id="stats" class="postresult">
       <div class="stat">
         <div class="title">Requests</div>
@@ -38,11 +39,11 @@
       <div class="options">
         <label>
           <span>Max URLs To Crawl</span>
-          <input id="url_limit" type="number" min="0" value="100">
+          <input id="url_limit" type="number" min="0" value="1000">
         </label>
         <label>
           <span>Max Requests Per Second</span>
-          <input id="request_maxpersecond" type="number" min="1" max="100" value="10">
+          <input id="request_maxpersecond" type="number" min="1" max="100" value="100">
         </label>
         <label>
           <span>Max Requests Open</span>
@@ -74,16 +75,35 @@
       </div>
       <button class="minimize" onclick="this.parentNode.classList.remove('active')"><span>‹</span></button>
     </div>
+    <div id="pre-results" class="fullpane">
+      <div class="content-head"></div>
+      <div class="content-body">
+        <svg id="bandwidth-bar"></svg>
+      </div>
+    </div>
     <div id="results" class="fullpane"></div>
     <div id="browser" class="fullpane active">
       <div id="browserinfo" class="content-head">
-        <button id="nav_backward" class="nav disabled">◀</button>
-        <button id="nav_forward" class="nav disabled">▶</button>
-        <input id="urlbar" type="text" value="https://www.google.com" spellcheck="false">
-        <button class="n1" onclick="run()">Crawl</button>
+        <button id="nav_backward" class="nav disabled">←</button>
+        <button id="nav_forward" class="nav disabled">→</button>
+        <input id="urlbar" type="text" value="" spellcheck="false">
+        <button id="nav_action" class="nav"></button>
+        <button id="" class="nav" data-pane="config">⚙</button>
+        <button onclick="run()" class="nav">▶</button>
       </div>
       <div class="content-body">
-        <webview id="webview" partition="electron" src="https://github.com"></webview>
+        <webview id="webview" partition="electron" src="./home.html"></webview>
+        <div id="webview-error"></div>
+      </div>
+    </div>
+    <div id="infographs" class="fullpane">
+      <div class="content-head"> </div>
+      <div class="content-body">
+        <div class="infograph" data-info="infog1"></div>
+        <div class="infograph" data-info="infog2"></div>
+        <div class="infograph" data-info="infog3"></div>
+        <div class="infograph" data-info="infog4"></div>
+        <div class="infograph" data-info="infog5"></div>
       </div>
     </div>
   </div>

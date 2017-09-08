@@ -1,10 +1,13 @@
-
-var $Q = (q) => document.querySelector(q),
+var path = require('path'),
+    $Q = (q) => document.querySelector(q),
     $QA = (q) => document.querySelectorAll(q),
-    requestsmade = 0;
+    $AddEvent = (e, t, fn) => { e.addEventListener(t, fn.bind(e)) },
+    requestsmade = 0,
+    results = [],
+    webv;
 
 app.incoming.on('client.done', function (event, message) {
-    var results = app.outgoing.view();
+    results = app.outgoing.view();
     var t = (Date.now() - $Q('[stat="Time"]').startTime);
     $QA('.postresult').forEach((element) => {
         element.classList.remove('postresult')
@@ -13,27 +16,50 @@ app.incoming.on('client.done', function (event, message) {
     $Q('[stat="Time"]').innerHTML = t >= 3000000 ? Math.ceil(t / 60000) + ' m' : Math.ceil(t / 1000) + ' s';
     $Q('[stat="Total"]').innerHTML = results.length;
     $Q('#results').innerHTML = views.results(results);
-    $Q('#overlay').classList.remove('active')
-    drawchart();
-    showFullPane('results');
-
+    showPane('results');
+    infograph.sunburst.initialize();
 });
 
 app.incoming.on('client.kmod', function (event, message) {
-    document.getElementById('overlay').innerHTML = '<span>' + message + '</span>';
+    console.log(message);
+    infograph.bandwidth.update(message.bandwidth);
+    document.getElementById('overlay').innerHTML = '<span>' + views.bytesize(message.bandwidth) + '/s</span>';
+    // '<span>' + message.requests.total + '</span>';
 });
 
-window.addEventListener('resize', function () { drawchart(); });
 document.addEventListener('DOMContentLoaded', function () {
-    google.charts.load('current', { 'packages': ['scatter'] });
-    var webv = $Q('#webview');
+    webv = $Q('#webview');
     webv.addEventListener('did-navigate', () => {
-        $Q('#urlbar').value = webv.getURL();
+        var url = webv.getURL();
+        $Q('#urlbar').placeholder = '';
         $Q('#urlbar').classList.remove('error');
+        if (url.indexOf('file') == 0) {
+            url = path.normalize(webv.getURL()).replace('file:\\', '')
+            if (url.indexOf(__dirname) == 0) {
+                url = url
+                    .replace(__dirname + '\\', '').replace('.html', '')
+                $Q('#urlbar').placeholder = url;
+                url = '';
+            } else {
+                url = 'file:////' + url;
+            }
+        }
+        $Q('#urlbar').value = url;
         nav_buttons();
     })
-    webv.addEventListener('did-fail-load', () => {
+    webv.addEventListener('did-start-loading', () => {
+        $Q('#nav_action').setAttribute('data-action', 'stop');
+    })
+    webv.addEventListener('did-stop-loading', () => {
+        $Q('#nav_action').setAttribute('data-action', 'reload');
+    })
+    webv.addEventListener('did-fail-load', (e) => {
+        if (!e.errorDescription)
+            return;
         $Q('#urlbar').classList.add('error');
+        $Q('#webview-error').innerHTML = e.errorDescription;
+        console.log(webv.getURL())
+        console.log(e)
         nav_buttons();
     })
     $Q('#urlbar').addEventListener('keydown', (e) => {
@@ -42,14 +68,14 @@ document.addEventListener('DOMContentLoaded', function () {
             load();
         }
     });
-    $Q('#btn_browser').addEventListener('click', (e) => {
-        showFullPane('browser');
+    $Q('#nav_action').addEventListener('click', () => {
+        if ($Q("#nav_action").getAttribute('data-action') == 'reload')
+            webv.reload();
+        else
+            webv.stop();
     })
-    $Q('#btn_config').addEventListener('click', (e) => {
-        showHalfPane('config')
-    })
-    $Q('#btn_result').addEventListener('click', (e) => {
-        showFullPane('results')
+    $QA('[data-pane]').forEach((el) => {
+        $AddEvent(el, 'click', (e) => { showPane(el.getAttribute('data-pane')); })
     })
     $Q('#nav_backward').addEventListener('click', (e) => {
         if (webv.canGoBack()) {
@@ -89,20 +115,23 @@ document.addEventListener('DOMContentLoaded', function () {
         $Q('#nav_forward').classList.toggle('disabled', !webv.canGoForward());
     }
 })
-
+function copyText(element) {
+    window.getSelection().selectAllChildren(element);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+}
 
 function run() {
-    showFullPane()
+    showPane('pre-results');
+    infograph.bandwidth.initialize();
     $Q('#config').classList.remove('active');
-    $Q('#overlay').classList.add('active');
-    $Q('#overlay').innerHTML = '<span>0</span>';
     $Q('[stat="Time"]').startTime = Date.now();
 
     var p = $Q('#protocols');
     requestsmade = 0;
     var protocols = p.options[p.selectedIndex].value;
     app.outgoing.crawl({
-        base_url: $Q('#urlbar').value,
+        base_url: webv.getURL(),
         url_limit: $Q('#url_limit').value * 1,
         url_passes: 1,
         request_maxpersecond: $Q('#request_maxpersecond').value * 1,
@@ -114,42 +143,26 @@ function run() {
     })
 }
 function load() {
-    if (!/^[A-Za-z\d]+:\/\//.test($Q('#urlbar').value)) {
-        $Q('#urlbar').value = 'http://' + $Q('#urlbar').value;
+
+    $Q('#webview-error').innerHTML = '';
+    switch ($Q('#urlbar').value) {
+        case 'home':
+            webv.loadURL('file:\\' + __dirname + '/home.html');
+            break;
+        default:
+            if (!/^[A-Za-z\d]+:\/\//.test($Q('#urlbar').value)) {
+                $Q('#urlbar').value = 'http://' + $Q('#urlbar').value;
+            }
+            webv.loadURL($Q('#urlbar').value);
+            break;
     }
-    $Q('#webview').loadURL($Q('#urlbar').value);
-    showFullPane('browser');
-
-
+    showPane('browser');
 }
-function drawchart() {
-    if (!views.chartData || views.chartData.length > 1000)
-        return;
-    var graph = new google.visualization.DataTable();
-    graph.addColumn('number', 'Start Time');
-    graph.addColumn('number', 'TTFB');
-    graph.addColumn({ type: 'string', role: 'tooltip' });
-    graph.addRows(views.chartData);
-    var options = {
-        chart: {
-            title: 'Request  TTFB',
-            subtitle: 'Timeline'
-        },
-        hAxis: { title: 'Start Time (unix)' },
-        vAxis: { title: 'TTFB (ms)' },
-        tooltip: { trigger: 'selection' }
-    };
-
-    var chart = new google.charts.Scatter($Q('#graphs'));
-    chart.draw(graph, google.charts.Scatter.convertOptions(options));
-}
-function showFullPane(target) {
-    $QA('.fullpane').forEach((el) => {
-        el.classList.toggle('active', !!(el.id == target));
-    });
-    showHalfPane();
-}
-function showHalfPane(target) {
+function showPane(target) {
+    if ($Q('#' + target) && $Q('#' + target).classList.contains('fullpane'))
+        $QA('.fullpane').forEach((el) => {
+            el.classList.toggle('active', !!(el.id == target));
+        });
     $QA('.halfpane').forEach((el) => {
         el.classList.toggle('active', !!(el.id == target));
     });

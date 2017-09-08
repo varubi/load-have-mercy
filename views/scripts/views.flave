@@ -1,0 +1,77 @@
+class views{
+	view infog1{		
+			<div id="infog1">
+			<div id="infog1-visual">
+				<div id="infog1-tip" style="visibility: hidden;">
+					<span id="infog1-percentage"></span>
+					<br/> of URLS begin with this path<br/>
+					<span id="infog1-count"></span>
+				</div>
+			</div>
+			<div id="infog1-path"></div>
+		</div>
+	}
+	view kms{		
+
+	}
+	view results{
+		@{
+			this.chartData = [];
+		}
+		<div class="content-head"></div>
+			<div class="content-body">
+			// <div id="jsonresult">
+			// 	<button class="n1" onclick="copyText(this.nextElementSibling)">Copy Result Data</button>
+			// 	<pre>@(JSON.stringify(data))</pre>
+			// </div>
+			<div id="graphs"></div>
+			<table>
+			<thead>
+			<tr>
+				<th>Status</th>
+				<th>HTTPS</th>
+				<th>URL</th>
+				<th>TTFB</th>
+				<th>DL</th>
+				<th>Total</th>
+				<th>Size</th>
+				<th>Speed</th>
+				<th>Parse Time</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(var i = 0; i < Math.min(1000, data.length); i++) {
+					@{
+						var rep = data[i];
+						var dl = Math.max(1, rep.requests[0].time - rep.requests[0].ttfb);
+						var r = Math.ceil(rep.requests[0].ttfb/10) * 10;
+						// this.chartData.push([rep.startTime, rep.ttfb, 'http' + (rep.secure?'s':'') + '://' + rep.host + rep.path])
+					}
+					<tr>
+						<td>@(rep.requests[0].status)</td>
+						<td>@((rep.href.protocol=='https:'?'✔':''))</td>
+						<td>
+							<a href="@(rep.href.fullpath)">
+								<span class="domain">@(rep.href.host)</span>
+								<span class="path">@(rep.href.path)</span>
+							</a>
+						</td>
+						<td>@(rep.requests[0].ttfb) ms</td>
+						<td>@(dl) ms</td>
+						<td>@(rep.requests[0].time) ms</td>
+						<td>@(this.bytesize(rep.requests[0].size))</td>
+						<td>@(this.bytesize((rep.requests[0].size/dl)*1000))/s</td>
+						<td>@(rep.requests[0].parsetime) ms</td>
+					</tr>
+				}
+			</tbody>
+			</table>
+		</div>
+	}
+	function bytesize{
+		var sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+		if (data == 0) return '0 Byte';
+		var i = parseInt(Math.floor(Math.log(data) / Math.log(1024)));
+		return Math.round(data / Math.pow(1024, i), 2) + ' ' + sizes[i];
+	}
+}
