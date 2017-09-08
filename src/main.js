@@ -2,10 +2,9 @@ const { app, BrowserWindow, webContents, session } = require('electron'),
     path = require('path'),
     url = require('url'),
     cp = require('child_process'),
-    parser = cp.fork(`${__dirname}/src/parser.js`),
-    appcode = require(`${__dirname}/src/appcode.js`);
-
-let mainWindow, client = new appcode.Client(parser);
+    parser = cp.fork(path.join(__dirname, 'server', 'parser.js')),
+    Client = require(path.join(__dirname, 'server', 'client.js')).Client;
+let mainWindow, client = new Client(parser);
 client.on('done', () => { mainWindow.webContents.send('client.done') })
 client.on('kmod', (obj) => { mainWindow.webContents.send('client.kmod', obj) })
 client.on('parseStart', (obj) => { mainWindow.webContents.send('client.parseStart', obj) });
@@ -29,7 +28,7 @@ function createWindow() {
     mainWindow.setMenu(null);
 
     mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'views', 'index.html'),
+        pathname: path.join(__dirname, 'client', 'index.html'),
         protocol: 'file:',
         slashes: true
     }))

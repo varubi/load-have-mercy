@@ -2,5 +2,5 @@
   "name": "load-have-mercy",
   "productName": "Load Have Mercy",
   "version": "0.1.1",
-  "main": "main.js"
+  "main": "src/main.js"
 }
