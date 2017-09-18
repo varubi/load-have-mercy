@@ -23,6 +23,21 @@ app.incoming.on('client.done', function (event, message) {
 app.incoming.on('client.kmod', function (event, message) {
     console.log(message);
     infograph.bandwidth.update(message.bandwidth);
+    $Q('#kms-requests .active').innerHTML = '<b>Active</b>' + message.requests.active;
+    $Q('#kms-requests .closed').innerHTML = '<b>Closed</b>' + message.requests.closed;
+    $Q('#kms-requests .opened').innerHTML = '<b>Opened</b>' + message.requests.opened;
+    var avg = 0;
+    if (message.responses.ttfb.length) {
+        for (var i = 0; i < message.responses.ttfb.length; i++) {
+            avg += message.responses.ttfb[i];
+        }
+        avg /= message.responses.ttfb.length;
+        avg = parseInt(avg);
+    }
+    $Q('#response-times').chart.update(avg);
+    $Q('#kms-requests-charts .active').chart.update(message.requests.active);
+    $Q('#kms-requests-charts .closed').chart.update(message.requests.closed);
+    $Q('#kms-requests-charts .opened').chart.update(message.requests.opened);
     document.getElementById('overlay').innerHTML = '<span>' + views.bytesize(message.bandwidth) + '/s</span>';
     // '<span>' + message.requests.total + '</span>';
 });
@@ -91,6 +106,14 @@ document.addEventListener('DOMContentLoaded', function () {
             $Q('#nav_forward').classList.add('disabled');
         }
     });
+    $Q("#results").addEventListener("click", function (e) {
+        if (e.target && e.target.matches("a")) {
+            showPane('browser');
+            webv.loadURL(e.target.getAttribute('href'))
+            e.preventDefault();
+
+        }
+    });
 
     $Q('#chrome-minimize').addEventListener('click', function (e) {
         var window = app.remote.getCurrentWindow();
@@ -126,6 +149,14 @@ function run() {
     infograph.bandwidth.initialize();
     $Q('#config').classList.remove('active');
     $Q('[stat="Time"]').startTime = Date.now();
+    $Q('#kms-requests-charts .opened').innerHTML = '';
+    $Q('#kms-requests-charts .opened').chart = new infograph.line('#kms-requests-charts .opened');
+    $Q('#kms-requests-charts .active').innerHTML = '';
+    $Q('#kms-requests-charts .active').chart = new infograph.line('#kms-requests-charts .active');
+    $Q('#kms-requests-charts .closed').innerHTML = '';
+    $Q('#kms-requests-charts .closed').chart = new infograph.line('#kms-requests-charts .closed');
+    $Q('#response-times').innerHTML = '';
+    $Q('#response-times').chart = new infograph.line('#response-times');
 
     var p = $Q('#protocols');
     requestsmade = 0;

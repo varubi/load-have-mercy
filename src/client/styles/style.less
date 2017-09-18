@@ -207,6 +207,10 @@ button {
         box-shadow: @boxshadow-right;
         &.active {
             transform: translateX(0px);
+            .content-head{
+                opacity: 1;
+            }
+            
         }
     }
     .fullpane {
@@ -236,8 +240,13 @@ button {
         input {
             -webkit-app-region: no-drag;
         }
+        opacity: 0;
+        transition: opacity 300ms ease-in 1s;
     }
     .content-body {
+        .wrapper{
+            padding: 10px;
+        }
         position: fixed;
         top: 50px;
         left: 0;
@@ -271,8 +280,7 @@ button {
     #browserinfo {
         #pane>.n2>.inner();
         font-size: 0;
-        transition: color 200ms;
-        &>*:first-child {
+        &:first-child {
             margin-left: 10px;
         }
         #nav_action {
@@ -323,12 +331,117 @@ button {
         }
     }
 }
-
-#bandwidth-bar{
-    height: 250px;
-    width: 100%;
-    .bar{
-        width: calc(85% / 60);
+#pre-results{
+    svg{
+        width: 100%;
+        padding: 20px;
+        .linepath{
+            fill: none;
+            stroke: #FFF;
+            stroke-width: 2px;
+        }
+        .tick{
+            line{
+                stroke: rgba(255,255,255,.5);
+                vector-effect: non-scaling-stroke;
+            }
+            text{
+                fill: #FFF;
+            }
+        }
+    }
+    #kms-response-wrapper{
+        display: flex;
+        align-content: stretch;
+        font-size: 28px;        
+        display: flex;
+        justify-content: space-between;
+        
+        &>*{
+            width: 66%;
+            margin: 5px;
+            background: @color_4;
+            flex-grow: 1;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            flex-flow: column;
+        }
+        .spacer{
+            width: 33%;            
+        }
+    }
+    #bandwidth-info {
+        display: flex;
+        flex-flow: row nowrap;
+        color: #FFF;
+        justify-content: space-around;
+        #bandwidth-bar{
+            margin: 5px;        
+            background: @color_2;
+            flex-grow: 1;
+            .bar{
+                width: calc(85% / 60);
+                fill: #FFF;
+                transition: all 200ms;
+            }
+        }
+        #bandwidth-stat-wrapper{            
+            width: 16.5%;
+            display: flex;
+            flex-flow: column nowrap;
+            align-content: stretch;
+            font-size: 28px;
+            display: flex;
+            flex-flow: column;
+            justify-content: space-between;
+            &>*{
+                background: @color_2;
+                flex-grow: 1;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                flex-flow: column;
+                margin: 5px;
+            }
+            b{
+                display: block;
+                font-size: 14px;
+            }
+            .current{
+                border-bottom: solid 1px #FFF;
+            }
+            
+        }
+    }
+    
+    #kms-requests{
+        height: 100px;
+    }
+    #kms-requests, #kms-requests-charts{
+        display: flex;
+        align-content: stretch;
+        font-size: 28px;        
+        display: flex;
+        justify-content: space-between;
+        color: #FFF;
+        &>*{
+            width: 100%;
+            margin: 5px;
+            background: @color_3;
+            flex-grow: 1;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            flex-flow: column;
+        }
+        b{
+            display: block;
+            font-size: 14px;
+        }        
+    }
+    #kms-recent{
+        
     }
 }
 
@@ -583,6 +696,65 @@ button {
         }
         &:hover {
             background: @color_primary;
+        }
+    }
+}
+
+@media screen and (max-width: 1279px) {
+    #pre-results{        
+        .large svg{
+            text{
+                font-size: 5px;
+            }
+        }        
+        .medium svg{
+            text{
+                font-size: 5px;
+            }
+        }        
+        .small svg{
+            text{
+                font-size: 10px;
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    #pre-results{        
+        .large svg{
+            text{
+                font-size: 4px;
+            }
+        }        
+        .medium svg{
+            text{
+                font-size: 4px;
+            }
+        }        
+        .small svg{
+            text{
+                font-size: 8px;
+            }
+        }
+    }
+}
+@media screen and (min-width: 1700px) {
+    #pre-results{        
+        .large svg{
+            text{
+                font-size: 3px;
+            }
+        }        
+        .medium svg{
+            text{
+                font-size: 3px;
+            }
+        }        
+        .small svg{
+            text{
+                font-size: 6px;
+            }
         }
     }
 }

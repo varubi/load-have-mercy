@@ -204,6 +204,10 @@ button.n2 {
 #viewport .fullpane.active {
   transform: translateX(0px);
 }
+#viewport .halfpane.active .content-head,
+#viewport .fullpane.active .content-head {
+  opacity: 1;
+}
 #viewport .fullpane {
   transition: transform 700ms ease-out;
   width: 100%;
@@ -226,6 +230,8 @@ button.n2 {
   height: 50px;
   left: 0;
   right: 190px;
+  opacity: 0;
+  transition: opacity 300ms ease-in 1s;
 }
 #viewport .content-head button,
 #viewport .content-head select,
@@ -239,6 +245,9 @@ button.n2 {
   right: 0;
   bottom: 0;
   overflow: auto;
+}
+#viewport .content-body .wrapper {
+  padding: 10px;
 }
 #browser #webview {
   height: 100%;
@@ -264,9 +273,8 @@ button.n2 {
   color: #222;
   background: #EEE;
   font-size: 0;
-  transition: color 200ms;
 }
-#browser #browserinfo > *:first-child {
+#browser #browserinfo:first-child {
   margin-left: 10px;
 }
 #browser #browserinfo #nav_action {
@@ -315,12 +323,108 @@ button.n2 {
 #browser #browserinfo input.internal {
   color: #AAA;
 }
-#bandwidth-bar {
-  height: 250px;
+#pre-results svg {
   width: 100%;
+  padding: 20px;
 }
-#bandwidth-bar .bar {
+#pre-results svg .linepath {
+  fill: none;
+  stroke: #FFF;
+  stroke-width: 2px;
+}
+#pre-results svg .tick line {
+  stroke: rgba(255, 255, 255, 0.5);
+  vector-effect: non-scaling-stroke;
+}
+#pre-results svg .tick text {
+  fill: #FFF;
+}
+#pre-results #kms-response-wrapper {
+  align-content: stretch;
+  font-size: 28px;
+  display: flex;
+  justify-content: space-between;
+}
+#pre-results #kms-response-wrapper > * {
+  width: 66%;
+  margin: 5px;
+  background: #685C79;
+  flex-grow: 1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+}
+#pre-results #kms-response-wrapper .spacer {
+  width: 33%;
+}
+#pre-results #bandwidth-info {
+  display: flex;
+  flex-flow: row nowrap;
+  color: #FFF;
+  justify-content: space-around;
+}
+#pre-results #bandwidth-info #bandwidth-bar {
+  margin: 5px;
+  background: #DA727E;
+  flex-grow: 1;
+}
+#pre-results #bandwidth-info #bandwidth-bar .bar {
   width: calc(1.41666667%);
+  fill: #FFF;
+  transition: all 200ms;
+}
+#pre-results #bandwidth-info #bandwidth-stat-wrapper {
+  width: 16.5%;
+  flex-flow: column nowrap;
+  align-content: stretch;
+  font-size: 28px;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+}
+#pre-results #bandwidth-info #bandwidth-stat-wrapper > * {
+  background: #DA727E;
+  flex-grow: 1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+  margin: 5px;
+}
+#pre-results #bandwidth-info #bandwidth-stat-wrapper b {
+  display: block;
+  font-size: 14px;
+}
+#pre-results #bandwidth-info #bandwidth-stat-wrapper .current {
+  border-bottom: solid 1px #FFF;
+}
+#pre-results #kms-requests {
+  height: 100px;
+}
+#pre-results #kms-requests,
+#pre-results #kms-requests-charts {
+  align-content: stretch;
+  font-size: 28px;
+  display: flex;
+  justify-content: space-between;
+  color: #FFF;
+}
+#pre-results #kms-requests > *,
+#pre-results #kms-requests-charts > * {
+  width: 100%;
+  margin: 5px;
+  background: #AC6C82;
+  flex-grow: 1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+}
+#pre-results #kms-requests b,
+#pre-results #kms-requests-charts b {
+  display: block;
+  font-size: 14px;
 }
 #results {
   background: #FFF;
@@ -497,4 +601,37 @@ button.n2 {
 }
 #chromebtns .chrome-btn:hover {
   background: #F2AE72;
+}
+@media screen and (max-width: 1279px) {
+  #pre-results .large svg text {
+    font-size: 5px;
+  }
+  #pre-results .medium svg text {
+    font-size: 5px;
+  }
+  #pre-results .small svg text {
+    font-size: 10px;
+  }
+}
+@media screen and (min-width: 1280px) {
+  #pre-results .large svg text {
+    font-size: 4px;
+  }
+  #pre-results .medium svg text {
+    font-size: 4px;
+  }
+  #pre-results .small svg text {
+    font-size: 8px;
+  }
+}
+@media screen and (min-width: 1700px) {
+  #pre-results .large svg text {
+    font-size: 3px;
+  }
+  #pre-results .medium svg text {
+    font-size: 3px;
+  }
+  #pre-results .small svg text {
+    font-size: 6px;
+  }
 }

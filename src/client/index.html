@@ -78,7 +78,32 @@
     <div id="pre-results" class="fullpane">
       <div class="content-head"></div>
       <div class="content-body">
-        <svg id="bandwidth-bar"></svg>
+        <div class="wrapper">
+          <div id="kms-response-wrapper">
+            <div class="spacer"></div>
+            <div id="response-times" class="medium"></div>
+          </div>
+          <div id="bandwidth-info">
+            <svg id="bandwidth-bar"></svg>
+            <div id="bandwidth-stat-wrapper">
+              <div class="current"></div>
+              <div class="max"></div>
+            </div>
+          </div>
+          <div id="kms-requests">
+            <div class="active"></div>
+            <div class="closed"></div>
+            <div class="opened"></div>
+          </div>
+          <div id="kms-requests-charts">
+            <div class="active small"></div>
+            <div class="closed small"></div>
+            <div class="opened small"></div>
+          </div>
+        </div>
+        <div id="kms-recent">
+
+        </div>
       </div>
     </div>
     <div id="results" class="fullpane"></div>

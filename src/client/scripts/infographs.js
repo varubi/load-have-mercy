@@ -128,30 +128,88 @@ infograph.sunburst.updateBreadcrumbs = function (nodeArray) {
 infograph.bandwidth = {};
 infograph.bandwidth.initialize = function () {
 	this.data = [];
+	this.minHeight = 4;
 	for (var i = 0; i < 60; i++)
 		this.data.push(0);
-	var svgHeight = $Q('#bandwidth-bar').getBoundingClientRect().height;
+	this.update(0)
+}
+infograph.bandwidth.update = function (value) {
+	this.data.push(value)
+	var max = Math.max.apply(null, this.data.slice(1));
+	$Q('#bandwidth-stat-wrapper .max').innerHTML = '<b>Max</b>' + views.bytesize(max);
+	$Q('#bandwidth-stat-wrapper .current').innerHTML = '<b>Current</b>' + views.bytesize(value);
+
+
 	d3.select("#bandwidth-bar")
 		.selectAll("rect")
 		.data(this.data)
 		.enter()
 		.append("rect")
 		.attr("class", "bar")
-		.attr("height", function (d, i) { return 10 })
-		.attr("x", function (d, i) { return (i * ((85 / 60) + .25)) + '%' })
-		.attr('y', (d, i) => { return (svgHeight / 2) - (10 / 2) })
-}
-infograph.bandwidth.update = function (value) {
+		.attr("height", function (d, i) { return '1%' })
+		.attr("x", function (d, i) { return (i * ((85 / 60) + .25)) + .25 + '%' })
+		.attr('y', (d, i) => { return '49.5%' })
+
 	this.data.shift();
-	this.data.push(value)
-	var max = Math.max.apply(null, this.data);
-	var svgHeight = $Q('#bandwidth-bar').getBoundingClientRect().height;
+	d3.select("#bandwidth-bar")
+		.select("rect")
+		.remove();
+
 	d3.select("#bandwidth-bar")
 		.selectAll("rect")
 		.data(this.data)
-		.attr("height", function (d, i) { return infograph.bandwidth.height(svgHeight, max, d) })
-		.attr('y', (d, i) => { return (svgHeight / 2) - (infograph.bandwidth.height(svgHeight, max, d) / 2) })
+		.attr("height", function (d, i) { return Math.max(1, ((d / max || 0) * 100)) + '%' })
+		.attr("x", function (d, i) { return (i * ((85 / 60) + .25)) + .25 + '%' })
+		.attr('y', (d, i) => { return Math.min(49.5, (100 - (((d / max || 0)) * 100)) / 2) + '%' })
 }
-infograph.bandwidth.height = function (svg, max, current) {
-	return ((((svg / 2) - 5) * (current / max)) || 0) + 10;
+infograph.line = function (container) {
+	var self = this;
+	this.data = [];
+	for (var i = 0; i < 60; i++)
+		this.data.push(0);
+	this.svg = d3.select(container)
+		.append('svg')
+		.attr('viewBox', '0 0 300 100')
+		.attr('preserveAspectRatio', 'xMidYMid meet')
+
+	this.x = d3.scaleLinear().range([15, 285]);
+	this.y = d3.scaleLinear().range([85, 0]);
+
+	this.x.domain([-60, 0]);
+	this.y.domain([0, 1]);
+
+	this.line = d3.line()
+		.x(function (d, i) { return self.x(i - 60); })
+		.y(function (d, i) { return self.y(d); });
+
+	this.svg.append("path")
+		.attr('vector-effect', 'non-scaling-stroke')
+		.attr("class", "linepath")
+		.attr("d", this.line(this.data));
+
+	this.svg.append("g")
+		.attr('class', 'y-axis')
+		.attr("transform", "translate(15,0)")
+		.call(d3.axisLeft(this.y));
+
+	this.svg.append("g")
+		.attr('class', 'x-axis')
+		.attr("transform", "translate(0,85)")
+		.call(d3.axisBottom(this.x));
+
+	this.svg.select('.x-axis path').remove();
+	this.svg.select('.y-axis path').remove();
+
+}
+
+infograph.line.prototype.update = function (value) {
+	this.data.push(value)
+	this.data.shift();
+	this.y.domain([0, Math.ceil((Math.max.apply(null, this.data) / 10) + .1) * 10]);
+	this.svg.select("path")
+		.attr("d", this.line(this.data));
+	this.svg.select('.y-axis')
+		.call(d3.axisLeft(this.y));
+	this.svg.select('.y-axis path').remove();
+
 }

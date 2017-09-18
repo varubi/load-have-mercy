@@ -165,7 +165,8 @@ Client.prototype.run = function () {
         if (response.headers['set-cookie'])
             self.cookies.set(href, response.headers['set-cookie']);
         response.setEncoding('utf8');
-        self.KMSEvent.requests.responses[response.statusCode] = (self.KMSEvent.requests.responses[response.statusCode] || 0) + 1;
+        self.KMSEvent.responses.codes[response.statusCode] = (self.KMSEvent.responses.codes[response.statusCode] || 0) + 1;
+        self.KMSEvent.responses.ttfb.push(ttfb);
         var body = '';
         response.on('data', function (chunk) {
             self.KMSEventPoll();
@@ -181,7 +182,7 @@ Client.prototype.run = function () {
     }
     function errorHandler(e) {
         self.KMSEventPoll();
-        self.KMSEvent.requests.responses[0]++;
+        self.KMSEvent.responses.codes[0]++;
         self.KMSEvent.requests.closed++;
         self.request_open--;
         var ttfb = Date.now() - start;

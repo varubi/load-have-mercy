@@ -167,12 +167,15 @@ function KMSEvent(timestamp) {
         opened: 0,
         closed: 0,
         active: 0,
-        responses: {
+        urls: []
+    };
+    this.responses = {
+        codes: {
             0: 0,
             200: 0
         },
-        urls: []
-    };
+        ttfb: []
+    }
     this.timestamp = timestamp || Date.now();
     this.bandwidth = 0;
 }
