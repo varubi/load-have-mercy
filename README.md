@@ -2,9 +2,11 @@
 ## Description 
 __Load Have Mercy__ is load test / crawler with the the intention of identifying slow areas on a site. It start with the page you have currently loaded in it's browser and goes from there. It doesn't make requests for images/js/css or any other url not in an anchor tag. The idea is to make request to pages that will put extra stress on a server not the CDN. There are many things on the roadmap, currently it only has a few option.
 
-## Requirements
-* node.js
-* electron
+## Installation
+`npm install`
+
+## Run
+`npm start`
 
 ## Config Options
 * **Max URLs To Crawl**  
