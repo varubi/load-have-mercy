@@ -21,8 +21,17 @@ app.incoming.on('client.done', function (event, message) {
 });
 
 app.incoming.on('client.kmod', function (event, message) {
-    console.log(message);
     infograph.bandwidth.update(message.bandwidth);
+    console.log(message)
+    $Q('#kms-response-wrapper .bandwidth').val += message.bandwidth;
+    $Q('#kms-response-wrapper .average').val += message.responses.ttfb.length ? message.responses.ttfb.reduce((accumulator, currentValue) => accumulator + currentValue) : 0;
+
+
+    $Q('#kms-response-wrapper .total').innerHTML = '<b>Total</b>' + message.requests.total;
+    $Q('#kms-response-wrapper .average').innerHTML = '<b>Average</b>' + Math.round($Q('#kms-response-wrapper .average').val / message.requests.total);
+    $Q('#kms-response-wrapper .bandwidth').innerHTML = '<b>Bandwidth</b>' + views.bytesize($Q('#kms-response-wrapper .bandwidth').val);
+
+
     $Q('#kms-requests .active').innerHTML = '<b>Active</b>' + message.requests.active;
     $Q('#kms-requests .closed').innerHTML = '<b>Closed</b>' + message.requests.closed;
     $Q('#kms-requests .opened').innerHTML = '<b>Opened</b>' + message.requests.opened;
@@ -149,6 +158,13 @@ function run() {
     infograph.bandwidth.initialize();
     $Q('#config').classList.remove('active');
     $Q('[stat="Time"]').startTime = Date.now();
+    $Q('#kms-response-wrapper .total').innerHTML = '';
+    $Q('#kms-response-wrapper .average').innerHTML = '';
+    $Q('#kms-response-wrapper .bandwidth').innerHTML = '';
+
+    $Q('#kms-response-wrapper .average').val = 0;
+    $Q('#kms-response-wrapper .bandwidth').val = 0;
+
     $Q('#kms-requests-charts .opened').innerHTML = '';
     $Q('#kms-requests-charts .opened').chart = new infograph.line('#kms-requests-charts .opened');
     $Q('#kms-requests-charts .active').innerHTML = '';

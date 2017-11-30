@@ -136,8 +136,8 @@ infograph.bandwidth.initialize = function () {
 infograph.bandwidth.update = function (value) {
 	this.data.push(value)
 	var max = Math.max.apply(null, this.data.slice(1));
-	$Q('#bandwidth-stat-wrapper .max').innerHTML = '<b>Max</b>' + views.bytesize(max);
-	$Q('#bandwidth-stat-wrapper .current').innerHTML = '<b>Current</b>' + views.bytesize(value);
+	$Q('#bandwidth-stat .max').innerHTML = '<b>Max</b>' + views.bytesize(max);
+	$Q('#bandwidth-stat .current').innerHTML = '<b>Current</b>' + views.bytesize(value);
 
 
 	d3.select("#bandwidth-bar")

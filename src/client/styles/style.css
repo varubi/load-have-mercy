@@ -339,24 +339,47 @@ button.n2 {
 #pre-results svg .tick text {
   fill: #FFF;
 }
+#pre-results .title {
+  display: flex;
+  margin: 5px;
+  font-size: 28px;
+  padding: 5px;
+}
+#pre-results #kms-response-title,
 #pre-results #kms-response-wrapper {
+  color: #FFF;
   align-content: stretch;
   font-size: 28px;
   display: flex;
   justify-content: space-between;
 }
+#pre-results #kms-response-title > *,
 #pre-results #kms-response-wrapper > * {
   width: 66%;
-  margin: 5px;
   background: #685C79;
+  margin: 5px;
   flex-grow: 1;
   text-align: center;
   display: flex;
   justify-content: center;
   flex-flow: column;
 }
-#pre-results #kms-response-wrapper .spacer {
+#pre-results #kms-response-title .general,
+#pre-results #kms-response-wrapper .general {
   width: 33%;
+}
+#pre-results #kms-response-title .general.col-wrapper,
+#pre-results #kms-response-wrapper .general.col-wrapper {
+  margin: 0;
+  background: none;
+}
+#pre-results #kms-response-title .general.col-wrapper > *,
+#pre-results #kms-response-wrapper .general.col-wrapper > * {
+  background: #685C79;
+}
+#pre-results #bandwidth-title {
+  color: #FFF;
+  background: #DA727E;
 }
 #pre-results #bandwidth-info {
   display: flex;
@@ -367,15 +390,21 @@ button.n2 {
 #pre-results #bandwidth-info #bandwidth-bar {
   margin: 5px;
   background: #DA727E;
-  flex-grow: 1;
+  width: calc(73.33333333%);
 }
 #pre-results #bandwidth-info #bandwidth-bar .bar {
   width: calc(1.41666667%);
   fill: #FFF;
   transition: all 200ms;
 }
-#pre-results #bandwidth-info #bandwidth-stat-wrapper {
-  width: 16.5%;
+#pre-results #bandwidth-info #bandwidth-stat > * {
+  background: #DA727E;
+}
+#pre-results #bandwidth-info #bandwidth-stat .current {
+  border-bottom: solid 1px #FFF;
+}
+#pre-results .col-wrapper {
+  flex-grow: 1;
   flex-flow: column nowrap;
   align-content: stretch;
   font-size: 28px;
@@ -383,8 +412,7 @@ button.n2 {
   flex-flow: column;
   justify-content: space-between;
 }
-#pre-results #bandwidth-info #bandwidth-stat-wrapper > * {
-  background: #DA727E;
+#pre-results .col-wrapper > * {
   flex-grow: 1;
   text-align: center;
   display: flex;
@@ -392,12 +420,13 @@ button.n2 {
   flex-flow: column;
   margin: 5px;
 }
-#pre-results #bandwidth-info #bandwidth-stat-wrapper b {
+#pre-results .col-wrapper b {
   display: block;
   font-size: 14px;
 }
-#pre-results #bandwidth-info #bandwidth-stat-wrapper .current {
-  border-bottom: solid 1px #FFF;
+#pre-results #kms-requests-title {
+  background: #AC6C82;
+  color: #FFF;
 }
 #pre-results #kms-requests {
   height: 100px;

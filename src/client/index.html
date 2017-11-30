@@ -79,16 +79,30 @@
       <div class="content-head"></div>
       <div class="content-body">
         <div class="wrapper">
+          <div id="kms-response-title">
+              <div class="general">General</div>
+              <div class="medium">Response Times</div>
+          </div>
           <div id="kms-response-wrapper">
-            <div class="spacer"></div>
+            <div class="general col-wrapper">
+                <div class="total"></div>
+                <div class="average"></div>
+                <div class="bandwidth"></div>
+            </div>
             <div id="response-times" class="medium"></div>
+          </div>
+          <div id="bandwidth-title" class="title">
+            Bandwidth Info
           </div>
           <div id="bandwidth-info">
             <svg id="bandwidth-bar"></svg>
-            <div id="bandwidth-stat-wrapper">
+            <div id="bandwidth-stat" class="col-wrapper">
               <div class="current"></div>
               <div class="max"></div>
             </div>
+          </div>
+          <div id="kms-requests-title" class="title">
+            Requests
           </div>
           <div id="kms-requests">
             <div class="active"></div>

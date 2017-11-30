@@ -210,7 +210,7 @@ button {
             .content-head{
                 opacity: 1;
             }
-            
+
         }
     }
     .fullpane {
@@ -261,7 +261,7 @@ button {
         height: 100%;
         width: 100%;
         position: absolute;
-    }    
+    }
     #webview-error {
         background: @color_negative;
         width:400px;
@@ -350,26 +350,45 @@ button {
             }
         }
     }
+    .title{
+        display: flex;
+        margin: 5px;
+        font-size: 28px;
+        padding: 5px;
+    }
+    #kms-response-title,
     #kms-response-wrapper{
+        color: #FFF;
         display: flex;
         align-content: stretch;
-        font-size: 28px;        
+        font-size: 28px;
         display: flex;
         justify-content: space-between;
-        
+
         &>*{
             width: 66%;
-            margin: 5px;
             background: @color_4;
+            margin: 5px;
             flex-grow: 1;
             text-align: center;
             display: flex;
             justify-content: center;
             flex-flow: column;
         }
-        .spacer{
-            width: 33%;            
-        }
+        .general{
+            width: 33%;
+            &.col-wrapper{
+                margin: 0;
+                background: none;
+                &>*{
+                    background: @color_4;
+                }
+            }
+        } 
+    }
+    #bandwidth-title{
+        color: #FFF;
+        background: @color_2;
     }
     #bandwidth-info {
         display: flex;
@@ -377,51 +396,58 @@ button {
         color: #FFF;
         justify-content: space-around;
         #bandwidth-bar{
-            margin: 5px;        
+            margin: 5px;
             background: @color_2;
-            flex-grow: 1;
+            width: calc(((100% / 6) * 5) - 10px);
             .bar{
                 width: calc(85% / 60);
                 fill: #FFF;
                 transition: all 200ms;
             }
         }
-        #bandwidth-stat-wrapper{            
-            width: 16.5%;
-            display: flex;
-            flex-flow: column nowrap;
-            align-content: stretch;
-            font-size: 28px;
-            display: flex;
-            flex-flow: column;
-            justify-content: space-between;
+        #bandwidth-stat{
             &>*{
                 background: @color_2;
-                flex-grow: 1;
-                text-align: center;
-                display: flex;
-                justify-content: center;
-                flex-flow: column;
-                margin: 5px;
-            }
-            b{
-                display: block;
-                font-size: 14px;
             }
             .current{
                 border-bottom: solid 1px #FFF;
             }
-            
         }
     }
-    
+    .col-wrapper{
+        display: flex;
+        flex-grow: 1;
+        flex-flow: column nowrap;
+        align-content: stretch;
+        font-size: 28px;
+        display: flex;
+        flex-flow: column;
+        justify-content: space-between;
+        &>*{
+            flex-grow: 1;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            flex-flow: column;
+            margin: 5px;
+        }
+        b{
+            display: block;
+            font-size: 14px;
+        }
+
+    }
+    #kms-requests-title{
+        background: @color_3;
+        color: #FFF;
+    }
     #kms-requests{
         height: 100px;
     }
     #kms-requests, #kms-requests-charts{
         display: flex;
         align-content: stretch;
-        font-size: 28px;        
+        font-size: 28px;
         display: flex;
         justify-content: space-between;
         color: #FFF;
@@ -438,10 +464,10 @@ button {
         b{
             display: block;
             font-size: 14px;
-        }        
+        }
     }
     #kms-recent{
-        
+
     }
 }
 
@@ -461,7 +487,7 @@ button {
             position: fixed;
             top: 110%;
         }
-    }    
+    }
     #graphs {
         width: 100%;
     }
@@ -524,7 +550,7 @@ button {
             &:nth-child(2) {
                 text-align: center;
                 width: 75px;
-            }            
+            }
             &:nth-child(3){
                 word-wrap: break-word;
             }
@@ -701,17 +727,17 @@ button {
 }
 
 @media screen and (max-width: 1279px) {
-    #pre-results{        
+    #pre-results{
         .large svg{
             text{
                 font-size: 5px;
             }
-        }        
+        }
         .medium svg{
             text{
                 font-size: 5px;
             }
-        }        
+        }
         .small svg{
             text{
                 font-size: 10px;
@@ -721,17 +747,17 @@ button {
 }
 
 @media screen and (min-width: 1280px) {
-    #pre-results{        
+    #pre-results{
         .large svg{
             text{
                 font-size: 4px;
             }
-        }        
+        }
         .medium svg{
             text{
                 font-size: 4px;
             }
-        }        
+        }
         .small svg{
             text{
                 font-size: 8px;
@@ -740,17 +766,17 @@ button {
     }
 }
 @media screen and (min-width: 1700px) {
-    #pre-results{        
+    #pre-results{
         .large svg{
             text{
                 font-size: 3px;
             }
-        }        
+        }
         .medium svg{
             text{
                 font-size: 3px;
             }
-        }        
+        }
         .small svg{
             text{
                 font-size: 6px;
