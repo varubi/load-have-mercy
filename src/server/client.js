@@ -47,20 +47,24 @@ Client.prototype.crawl = function (config) {
     }
 }
 Client.prototype.resolve = function (referrer, href) {
-    var obj = Object.create(null);
-    href = (href.indexOf('//') == 0 ? referrer.protocol : '') + href;
-    href = new url.URL(href, (referrer || {}).origin);
-    obj.origin = href.origin;
-    obj.protocol = href.protocol;
-    obj.host = href.host;
-    obj.pathname = (href.pathname || '/');
-    obj.path = (obj.pathname.indexOf('/') != 0 ? '/' : '') + obj.pathname.trim();
-    if (this.queryStrings)
-        obj.path += href.search;
-    if (!this.caseSensitive)
-        obj.path = obj.pathname.toLowerCase();
-    obj.fullpath = obj.origin + obj.path;
-    return obj;
+    try {
+        var obj = Object.create(null);
+        href = (href.indexOf('//') == 0 ? referrer.protocol : '') + href;
+        href = new url.URL(href, (referrer || {}).origin);
+        obj.origin = href.origin;
+        obj.protocol = href.protocol;
+        obj.host = href.host;
+        obj.pathname = (href.pathname || '/');
+        obj.path = (obj.pathname.indexOf('/') != 0 ? '/' : '') + obj.pathname.trim();
+        if (this.queryStrings)
+            obj.path += href.search;
+        if (!this.caseSensitive)
+            obj.path = obj.pathname.toLowerCase();
+        obj.fullpath = obj.origin + obj.path;
+        return obj;
+    } catch (error) {
+
+    }
 }
 Client.prototype.parserHandler = function (obj) {
     this.KMSEventPoll();
@@ -92,6 +96,8 @@ Client.prototype.parseQueue = function (obj) {
 Client.prototype.queue = function (referrer, href) {
     var self = this;
     var href = this.resolve(referrer, href);
+    if (href.error)
+        return;
     if (['http:', 'https:'].indexOf(href.protocol) < 0)
         return;
     if (this.url_limit && this.url_limit < this.database.queued.length)
